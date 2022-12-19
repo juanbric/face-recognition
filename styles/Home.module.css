@@ -80,6 +80,17 @@
   padding: 4rem 0;
 }
 
+.body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column
+}
+
 .center::before {
   background: var(--secondary-glow);
   border-radius: 50%;

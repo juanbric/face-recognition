@@ -1,183 +1,112 @@
-import Head from "next/head";
-import Image from "next/image";
-import { Inter } from "@next/font/google";
-import styles from "../styles/Home.module.css";
+import React, { useState, useEffect } from "react";
 import * as faceapi from "face-api.js";
-import { LabeledFaceDescriptors } from "face-api.js";
-import { useEffect, useRef, useState } from "react";
 
-const inter = Inter({ subsets: ["latin"] });
+const FaceRecognition: React.FC = () => {
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [faceMatches, setFaceMatches] = useState<string[] | null>(null);
 
-export default function Home() {
-  // // Recognition portion
-  // function loadLabeledImages() {
-  //   const labels = [
-  //     "Black Widow",
-  //     "Captain America",
-  //     "Captain Marvel",
-  //     "Hawkeye",
-  //     "Jim Rhodes",
-  //     "Thor",
-  //     "Tony Stark",
-  //   ];
-  //   return Promise.all(
-  //     labels.map(async (label) => {
-  //       const descriptions = [];
-  //       for (let i = 1; i <= 2; i++) {
-  //         const img = await faceapi.fetchImage(
-  //           `https://raw.githubusercontent.com/WebDevSimplified/Face-Recognition-JavaScript/master/labeled_images/${label}/${i}.jpg`
-  //         );
-  //         const detections: any = await faceapi
-  //           .detectSingleFace(img)
-  //           .withFaceLandmarks()
-  //           .withFaceDescriptor();
-  //         descriptions.push(detections.descriptor);
-  //       }
+  function loadLabeledImages() {
+    const labels = [
+      "Black Widow",
+      "Captain America",
+      "Captain Marvel",
+      "Hawkeye",
+      "Jim Rhodes",
+      "Thor",
+      "Tony Stark",
+    ];
+    return Promise.all(
+      labels.map(async (label) => {
+        const descriptions = [];
+        for (let i = 1; i <= 2; i++) {
+          const img = await faceapi.fetchImage(
+            `https://raw.githubusercontent.com/WebDevSimplified/Face-Recognition-JavaScript/master/labeled_images/${label}/${i}.jpg`
+          );
+          const detections: any = await faceapi
+            .detectSingleFace(img)
+            .withFaceLandmarks()
+            .withFaceDescriptor();
+          descriptions.push(detections.descriptor);
+        }
 
-  //       return new faceapi.LabeledFaceDescriptors(label, descriptions);
-  //     })
-  //   );
-  // }
-
-  // // Needed for face-api
-  // Promise.all([
-  //   faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
-  //   faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
-  //   faceapi.nets.ssdMobilenetv1.loadFromUri("/models"),
-  // ]).then(start);
-
-  // //
-  // async function start() {
-  //
-
-  //   const labeledFaceDescriptors = await loadLabeledImages();
-  //   const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6);
-  //   let image: any;
-  //   let canvas: any;
-  //   document.body.append("Loaded");
-  //   imageUpload &&
-  //     imageUpload.addEventListener("change", async () => {
-  //
-  //       image = await faceapi.bufferToImage(imageUpload.files[0]);
-  //       container.append(image);
-  //       canvas = faceapi.createCanvasFromMedia(image);
-  //       container.append(canvas);
-  //       const displaySize = { width: image.width, height: image.height };
-  //       faceapi.matchDimensions(canvas, displaySize);
-  //       const detections = await faceapi
-  //         .detectAllFaces(image)
-  //         .withFaceLandmarks()
-  //         .withFaceDescriptors();
-  //       const resizedDetections = faceapi.resizeResults(
-  //         detections,
-  //         displaySize
-  //       );
-  //       const results = resizedDetections.map((d) =>
-  //         faceMatcher.findBestMatch(d.descriptor)
-  //       );
-  //       results.forEach((result, i) => {
-  //         const box = resizedDetections[i].detection.box;
-  //         const drawBox = new faceapi.draw.DrawBox(box, {
-  //           label: result.toString().replace(/\(.*\)/, ""),
-  //         });
-  //         console.log("result", result.toString());
-  //         drawBox.draw(canvas);
-  //       });
-  //     });
-  // }
-
-  const [file, setFile] = useState<any>();
-  const [image, setImage] = useState<any>();
-  const imgRef = useRef(null);
-  const canvasRef = useRef(null);
-
-  // Detect faces and draw bos
-  const handleImage = async () => {
-    const detections = await faceapi
-      //@ts-ignore
-      .detectAllFaces(imgRef.current)
-      .withFaceLandmarks()
-      .withFaceDescriptors();
-    //@ts-ignore
-    canvasRef.current.innerHtml = faceapi.createCanvasFromMedia(imgRef.current);
-    //@ts-ignore
-    faceapi.matchDimensions(canvasRef.current, {
-      width: 940,
-      height: 650,
-    });
-
-    const resized = faceapi.resizeResults(detections, {
-      width: 940,
-      height: 650,
-    });
-    //@ts-ignore
-    faceapi.draw.drawDetections(canvasRef.current, resized);
-  };
+        return new faceapi.LabeledFaceDescriptors(label, descriptions);
+      })
+    );
+  }
 
   useEffect(() => {
-    const loadModels = () => {
-      Promise.all([
-        faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
-        faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
-        faceapi.nets.ssdMobilenetv1.loadFromUri("/models"),
-      ])
-        .then(handleImage)
-        .catch((e) => console.log(e));
-    };
+    async function loadModels() {
+      await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
+      await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
+      await faceapi.nets.ssdMobilenetv1.loadFromUri("/models");
+      console.log("loaded");
+    }
 
-    imgRef.current && loadModels();
+    loadModels();
   }, []);
 
-  // Show image from input
-  useEffect(() => {
-    file && console.log(URL.createObjectURL(file));
-  }, [file]);
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      return;
+    }
 
-  useEffect(() => {
-    const getImage = () => {
-      const img = new Image();
-      img.src = URL.createObjectURL(file);
-      img.onload = () => {
-        setImage({
-          url: img.src,
-          width: img.width,
-          height: img.height,
-        });
-      };
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImageUrl(reader.result as string);
     };
+    reader.readAsDataURL(file);
+  };
 
-    file && getImage();
-  }, [file]);
+  const handleRecognizeClick = async () => {
+    if (!imageUrl) {
+      return;
+    }
 
-  console.log(image);
+    // Load the image into an HTMLImageElement
+    const img = await faceapi.fetchImage(imageUrl);
+
+    // Detect the faces in the image
+    const detections = await faceapi
+      .detectAllFaces(img)
+      .withFaceLandmarks()
+      .withFaceDescriptors();
+
+    // Get the face descriptor objects for the detected faces
+    const faceDescriptors = detections.map((detection) => detection.descriptor);
+
+    // Create a face matcher with the face descriptor objects from the database
+    const labeledFaceDescriptors = await loadLabeledImages();
+    const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6);
+
+    // Find the best match for each face descriptor
+    const matches = faceDescriptors.map((descriptor) =>
+      faceMatcher.findBestMatch(descriptor).toString()
+    );
+
+    setFaceMatches(matches);
+  };
 
   return (
-    <>
-      <Head>
-        <title>Reconocimiento facial</title>
-        <meta name="description" content="Generated by create next app" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="" />
-      </Head>
-      <main style={{ display: "flex", background: '#fff', height: '110vh' }}>
-        <input
-          onChange={(e: any) => setFile(e.target.files[0])}
-          id="file"
-          type="file"
-        />
-      
-        <img
-          crossOrigin="anonymous"
-          ref={imgRef}
-          src="/2.jpg"
-          width={940}
-          height={650}
-        />
-        <canvas
-          ref={canvasRef}
-          style={{ position: "absolute", width: "940px", height: "650px" }}
-        />
-      </main>
-    </>
+    <div className="py-8 flex flex-col items-center justify-center">
+      <input type="file" accept="image/*" onChange={handleImageChange} />
+      <button onClick={handleRecognizeClick}>Recognize</button>
+      {imageUrl && (
+        <div>
+          <div>
+            <img src={imageUrl} alt="Selected" />
+          </div>
+          {faceMatches && (
+            <div>
+              {faceMatches.map((match, i) => (
+                <div key={i}>{match}</div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
-}
+};
+
+export default FaceRecognition;

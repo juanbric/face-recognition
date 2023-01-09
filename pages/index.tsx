@@ -159,13 +159,14 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="" />
       </Head>
-      <main style={{ display: "flex" }}>
+      <main style={{ display: "flex", background: '#fff', height: '110vh' }}>
         <input
           onChange={(e: any) => setFile(e.target.files[0])}
           id="file"
           type="file"
         />
-        {/* <img
+      
+        <img
           crossOrigin="anonymous"
           ref={imgRef}
           src="/2.jpg"
@@ -175,7 +176,7 @@ export default function Home() {
         <canvas
           ref={canvasRef}
           style={{ position: "absolute", width: "940px", height: "650px" }}
-        /> */}
+        />
       </main>
     </>
   );

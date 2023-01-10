@@ -57,7 +57,6 @@ const FaceRecognition: React.FC = () => {
       return
     }
     console.log("loading recognition")
-   
 
     // Load the image into an HTMLImageElement
     const img = await faceapi.fetchImage(imageUrl)
@@ -95,7 +94,7 @@ const FaceRecognition: React.FC = () => {
     const reader = new FileReader()
     reader.onload = () => {
       setImageUrl(reader.result as string)
-      handleRecognition();
+      // handleRecognition();
     }
     reader.readAsDataURL(file)
   }
@@ -115,6 +114,7 @@ const FaceRecognition: React.FC = () => {
             file:bg-violet-50 file:text-violet-700
             hover:file:bg-violet-100"
           />
+          <button onClick={handleRecognition}>Recognize</button>
         </>
       ) : (
         <p>Loading...</p>

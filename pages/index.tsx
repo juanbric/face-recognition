@@ -42,9 +42,9 @@ const FaceRecognition: React.FC = () => {
 
 async function recognize(token:any) {
     const faces = [
-      "Thiago - No puede salir en redes",
-      "Filipa - No puede salir en redes",
-      "Sienna - No puede salir en redes",
+      "Thiago",
+      "Filipa",
+      "Sienna",
     ];
     return Promise.all(
         faces.map(async (label) => {
@@ -128,7 +128,7 @@ async function recognize(token:any) {
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            className="text-sm pl-14 text-slate-500 file:mr-4 file:py-2 mb-8 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 first-letter:hover:file:bg-violet-100"
+            className="text-sm pl-0 lg:pl-14 text-slate-500 file:mr-4 file:py-2 mb-8 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 first-letter:hover:file:bg-violet-100"
           />
         </>
       ) : (

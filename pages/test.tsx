@@ -1,5 +1,5 @@
 import MetaTag from "../components/MetaTag";
-import { getStorage, ref, getMetadata } from "firebase/storage";
+import { ref, getMetadata } from "firebase/storage";
 import { storage } from "../config/firebase"
 
 const test = () => {
@@ -15,7 +15,7 @@ const test = () => {
   return (
     <div className="py-16 flex flex-col items-center justify-center">
       <MetaTag
-        title={"Reconoce"}
+        title={"Test"}
         description={"Aplicación de detección y ¨Rreconocimiento facial"}
       />
       <p>Hola</p>

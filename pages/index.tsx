@@ -1,101 +1,127 @@
-import React, { useState, useEffect } from "react";
-import * as faceapi from "face-api.js";
+import React, { useState, useEffect } from 'react'
+import * as faceapi from 'face-api.js'
+import firebase from 'firebase/app';
+import "firebase/storage";
 
 const FaceRecognition: React.FC = () => {
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [faceMatches, setFaceMatches] = useState<string[] | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const [faceMatches, setFaceMatches] = useState<string[] | null>(null)
+  const [loaded, setLoaded] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState(false);
 
-  function loadLabeledImages() {
-    const labels = [
-      "Black Widow",
-      "Captain America",
-      "Captain Marvel",
-      "Hawkeye",
-      "Jim Rhodes",
-      "Thor",
-      "Tony Stark",
-    ];
+  // Load models
+    useEffect(() => {
+      async function loadModels() {
+        await faceapi.nets.faceRecognitionNet.loadFromUri('/models')
+        await faceapi.nets.faceLandmark68Net.loadFromUri('/models')
+        await faceapi.nets.ssdMobilenetv1.loadFromUri('/models')
+        setLoaded(true)
+      }
+      loadModels()
+    }, [])
+
+// Go through the db
+  function recognize() {
+    const faces = [
+      'Black Widow',
+      'Captain America',
+      'Captain Marvel',
+      'Hawkeye',
+      'Jim Rhodes',
+      'Thor',
+      'Tony Stark',
+    ]
     return Promise.all(
-      labels.map(async (label) => {
-        const descriptions = [];
+      faces.map(async (label) => {
+        const descriptions = []
         for (let i = 1; i <= 2; i++) {
           const img = await faceapi.fetchImage(
-            `https://raw.githubusercontent.com/WebDevSimplified/Face-Recognition-JavaScript/master/labeled_images/${label}/${i}.jpg`
-          );
+            `https://raw.githubusercontent.com/WebDevSimplified/Face-Recognition-JavaScript/master/labeled_images/${label}/${i}.jpg`,
+          )
           const detections: any = await faceapi
             .detectSingleFace(img)
             .withFaceLandmarks()
-            .withFaceDescriptor();
-          descriptions.push(detections.descriptor);
+            .withFaceDescriptor()
+          descriptions.push(detections.descriptor)
         }
 
-        return new faceapi.LabeledFaceDescriptors(label, descriptions);
-      })
-    );
+        return new faceapi.LabeledFaceDescriptors(label, descriptions)
+      }),
+    )
   }
 
-  useEffect(() => {
-    async function loadModels() {
-      await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
-      await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
-      await faceapi.nets.ssdMobilenetv1.loadFromUri("/models");
-      console.log("loaded");
-    }
 
-    loadModels();
-  }, []);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) {
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      setImageUrl(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleRecognizeClick = async () => {
+  // Handle recognition
+  const handleRecognition = async () => {
     if (!imageUrl) {
-      return;
+      return
     }
+    console.log("loading recognition")
+   
 
     // Load the image into an HTMLImageElement
-    const img = await faceapi.fetchImage(imageUrl);
+    const img = await faceapi.fetchImage(imageUrl)
 
     // Detect the faces in the image
     const detections = await faceapi
       .detectAllFaces(img)
       .withFaceLandmarks()
-      .withFaceDescriptors();
+      .withFaceDescriptors()
 
     // Get the face descriptor objects for the detected faces
-    const faceDescriptors = detections.map((detection) => detection.descriptor);
+    const faceDescriptors = detections.map((detection) => detection.descriptor)
 
     // Create a face matcher with the face descriptor objects from the database
-    const labeledFaceDescriptors = await loadLabeledImages();
-    const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6);
+    const labeledFaceDescriptors = await recognize()
+    const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6)
 
     // Find the best match for each face descriptor
     const matches = faceDescriptors.map((descriptor) =>
-      faceMatcher.findBestMatch(descriptor).toString()
-    );
+      faceMatcher.findBestMatch(descriptor).toString(),
+    )
+    console.log("loading recognition done")
+   
+    setFaceMatches(matches)
+  }
 
-    setFaceMatches(matches);
-  };
+
+  // Handle image function
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) {
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onload = () => {
+      setImageUrl(reader.result as string)
+      handleRecognition();
+    }
+    reader.readAsDataURL(file)
+  }
 
   return (
-    <div className="py-8 flex flex-col items-center justify-center">
-      <input type="file" accept="image/*" onChange={handleImageChange} />
-      <button onClick={handleRecognizeClick}>Recognize</button>
+    <div className="py-16 flex flex-col items-center justify-center">
+      {loaded === true ? (
+        <>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="text-sm text-slate-500
+            file:mr-4 file:py-2 mb-8 file:px-4
+            file:rounded-full file:border-0
+            file:text-sm file:font-semibold
+            file:bg-violet-50 file:text-violet-700
+            hover:file:bg-violet-100"
+          />
+        </>
+      ) : (
+        <p>Loading...</p>
+      )}
       {imageUrl && (
         <div>
-          <div>
             <img src={imageUrl} alt="Selected" />
-          </div>
           {faceMatches && (
             <div>
               {faceMatches.map((match, i) => (
@@ -103,10 +129,11 @@ const FaceRecognition: React.FC = () => {
               ))}
             </div>
           )}
+          
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default FaceRecognition;
+export default FaceRecognition

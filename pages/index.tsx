@@ -42,13 +42,10 @@ const FaceRecognition: React.FC = () => {
 
 async function recognize(token:any) {
     const faces = [
-      "Black Widow",
-      "Captain America",
-      "Captain Marvel",
-      "Hawkeye",
-      "Jim Rhodes",
-      "Thor",
-      "Tony Stark",
+      "Thiago - No puede salir en redes",
+      "Filipa - No puede salir en redes",
+      "Sienna - No puede salir en redes",
+      "Olivia - No puede salir en redes",
     ];
     return Promise.all(
         faces.map(async (label) => {

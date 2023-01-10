@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import * as faceapi from "face-api.js";
-import firebase from "firebase/app";
-import "firebase/storage";
+import MetaTag from "../components/MetaTag";
 
 const FaceRecognition: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -104,6 +103,11 @@ const FaceRecognition: React.FC = () => {
 
   return (
     <div className="py-16 flex flex-col items-center justify-center">
+      <MetaTag
+        title={"Reconoce"}
+        description={"Aplicación de detección y ¨Rreconocimiento facial"}
+      />
+
       {/* Input field */}
       {loaded === true ? (
         <>
@@ -145,7 +149,9 @@ const FaceRecognition: React.FC = () => {
             <div>
               {faceMatches.map((match, i) => (
                 <div className="text-lg text-bold text-slate-500 mt-2" key={i}>
-                  {match.replace(/\(.*\)/g, "").replace(/^\w/, c => c.toUpperCase())}
+                  {match
+                    .replace(/\(.*\)/g, "")
+                    .replace(/^\w/, (c) => c.toUpperCase())}
                 </div>
               ))}
             </div>

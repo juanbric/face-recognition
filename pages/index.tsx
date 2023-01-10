@@ -8,6 +8,7 @@ const FaceRecognition: React.FC = () => {
   const [faceMatches, setFaceMatches] = useState<string[] | null>(null);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [hideRecognize, setHideRecognize] = useState(false);
 
   // Load models
   useEffect(() => {
@@ -56,6 +57,7 @@ const FaceRecognition: React.FC = () => {
       return;
     }
     console.log("loading recognition");
+    setHideRecognize(true);
     setIsLoading(true);
 
     // Load the image into an HTMLImageElement
@@ -90,6 +92,9 @@ const FaceRecognition: React.FC = () => {
       return;
     }
 
+    setFaceMatches([]);
+    setHideRecognize(false);
+
     const reader = new FileReader();
     reader.onload = () => {
       setImageUrl(reader.result as string);
@@ -99,36 +104,53 @@ const FaceRecognition: React.FC = () => {
 
   return (
     <div className="py-16 flex flex-col items-center justify-center">
+      {/* Input field */}
       {loaded === true ? (
         <>
           <input
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            className="text-sm text-slate-500 file:mr-4 file:py-2 mb-8 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 first-letter:hover:file:bg-violet-100"
+            className="text-sm pl-14 text-slate-500 file:mr-4 file:py-2 mb-8 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 first-letter:hover:file:bg-violet-100"
           />
         </>
       ) : (
-        <p>Loading...</p>
+        <p className="text-sm text-slate-500">Loading...</p>
       )}
+
       {imageUrl && (
-        <div>
-          <button
-            onClick={handleRecognition}
-            className=" text-sm py-2 mb-4 px-4 rounded-full border-0 font-semibold bg-violet-50 text-violet-700 hover:bg-violet-100"
-          >
-            ¡Reconoce!
-          </button>
+        <>
+          {/* Recognize button */}
+          {hideRecognize ? null : (
+            <button
+              onClick={handleRecognition}
+              className=" text-sm py-2 mb-4 px-4 rounded-full border-0 font-semibold bg-violet-50 text-violet-700 hover:bg-violet-100"
+            >
+              ¡Reconoce!
+            </button>
+          )}
+
+          {/* Image */}
           <img src={imageUrl} alt="Selected" width={400} />
-          {isLoading ? <p>Cargando resultados de reconocimiento</p> : null}
+
+          {/* Loading results */}
+          {isLoading ? (
+            <p className="text-sm text-slate-500 mt-2">
+              Cargando resultados de reconocimiento...
+            </p>
+          ) : null}
+
+          {/* Recognition results */}
           {faceMatches && (
             <div>
               {faceMatches.map((match, i) => (
-                <div key={i}>{match}</div>
+                <div className="text-lg text-bold text-slate-500 mt-2" key={i}>
+                  {match.replace(/\(.*\)/g, "").replace(/^\w/, c => c.toUpperCase())}
+                </div>
               ))}
             </div>
           )}
-        </div>
+        </>
       )}
     </div>
   );

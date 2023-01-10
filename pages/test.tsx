@@ -1,17 +1,10 @@
 import MetaTag from "../components/MetaTag";
-import { ref, getMetadata } from "firebase/storage";
-import { storage } from "../config/firebase"
+import { ref, getDownloadURL } from "firebase/storage";
+import { storage } from "../config/firebase";
 
 const test = () => {
-    const forestRef = ref(storage, 'Black-Widow/1.jpg');
-    
-    getMetadata(forestRef)
-    .then((metadata) => {
-      console.log(metadata)
-    })
-    .catch((error) => {
-        console.log(error)
-    });
+  const imgRef = ref(storage, "Black-Widow/1.jpg");
+ const githubToken = "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"
   return (
     <div className="py-16 flex flex-col items-center justify-center">
       <MetaTag

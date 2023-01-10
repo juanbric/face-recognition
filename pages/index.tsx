@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import * as faceapi from "face-api.js";
 import MetaTag from "../components/MetaTag";
+import { fetchImage } from "face-api.js";
 
 const FaceRecognition: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -21,7 +22,25 @@ const FaceRecognition: React.FC = () => {
   }, []);
 
   // Go through the db
-  function recognize() {
+  async function fetchImage(label:any, i:any, token:any) {
+    const headers = {
+        'Authorization': `Token ${token}`,
+        'Accept': 'application/vnd.github+json'
+    };
+    const path = `/repos/juanbric/face-recognition/contents/labeled_images/${label}/${i}.jpg`;
+    const url = `https://api.github.com${path}`;
+    try {
+        const response = await fetch(url, { headers });
+        const json = await response.json();
+        const imgUrl = json.download_url;
+        return await faceapi.fetchImage(imgUrl);
+    } catch (err:any) {
+        console.error(err);
+        throw new Error(`Failed to fetch image: ${err.message}`);
+    }
+}
+
+async function recognize(token:any) {
     const faces = [
       "Black Widow",
       "Captain America",
@@ -32,24 +51,22 @@ const FaceRecognition: React.FC = () => {
       "Tony Stark",
     ];
     return Promise.all(
-      faces.map(async (label) => {
-        const descriptions = [];
-        for (let i = 1; i <= 2; i++) {
-          const img = await faceapi.fetchImage(
-            `https://raw.githubusercontent.com/WebDevSimplified/Face-Recognition-JavaScript/master/labeled_images/${label}/${i}.jpg`
-          );
-          const detections: any = await faceapi
-            .detectSingleFace(img)
-            .withFaceLandmarks()
-            .withFaceDescriptor();
-          descriptions.push(detections.descriptor);
-        }
-
-        return new faceapi.LabeledFaceDescriptors(label, descriptions);
-      })
+        faces.map(async (label) => {
+            const descriptions = [];
+            for (let i = 1; i <= 1; i++) {
+                const img = await fetchImage(label, i, token);
+                const detections = await faceapi
+                    .detectSingleFace(img)
+                    .withFaceLandmarks()
+                    .withFaceDescriptor();
+                    if (detections) {
+                      descriptions.push(detections.descriptor);
+                  }
+            }
+            return new faceapi.LabeledFaceDescriptors(label, descriptions);
+        })
     );
-  }
-
+}
   // Handle recognition
   const handleRecognition = async () => {
     if (!imageUrl) {
@@ -72,7 +89,7 @@ const FaceRecognition: React.FC = () => {
     const faceDescriptors = detections.map((detection) => detection.descriptor);
 
     // Create a face matcher with the face descriptor objects from the database
-    const labeledFaceDescriptors = await recognize();
+    const labeledFaceDescriptors = await recognize("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");
     const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6);
 
     // Find the best match for each face descriptor

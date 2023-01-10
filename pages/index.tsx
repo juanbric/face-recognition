@@ -22,12 +22,12 @@ const FaceRecognition: React.FC = () => {
   }, []);
 
   // Go through the db
-  async function fetchImage(label:any, i:any, token:any) {
+  async function fetchImage(label:any, token:any) {
     const headers = {
         'Authorization': `Token ${token}`,
         'Accept': 'application/vnd.github+json'
     };
-    const path = `/repos/juanbric/face-recognition/contents/labeled_images/${label}/${i}.jpg`;
+    const path = `/repos/juanbric/face-recognition/contents/labeled_images/${label}/1.jpg`;
     const url = `https://api.github.com${path}`;
     try {
         const response = await fetch(url, { headers });
@@ -45,13 +45,12 @@ async function recognize(token:any) {
       "Thiago - No puede salir en redes",
       "Filipa - No puede salir en redes",
       "Sienna - No puede salir en redes",
-      "Olivia - No puede salir en redes",
     ];
     return Promise.all(
         faces.map(async (label) => {
             const descriptions = [];
             for (let i = 1; i <= 1; i++) {
-                const img = await fetchImage(label, i, token);
+                const img = await fetchImage(label, token);
                 const detections = await faceapi
                     .detectSingleFace(img)
                     .withFaceLandmarks()

@@ -14,7 +14,7 @@ export const MetaTag = ({
       <meta name="distribution" content="Global" />
       <meta name="creator" content="Juan Pablo Briceno" />
       <meta name="publisher" content="Zentra Dev" />
-      <link rel="icon" href="https://svgshare.com/i/pNR.svg" />
+      <link rel="icon" href="https://i.postimg.cc/rpCZS13d/logo.png" />
       <meta http-equiv="content-language" content="es" />
     </Head>
   )

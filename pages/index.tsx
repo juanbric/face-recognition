@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as faceapi from "face-api.js";
 import MetaTag from "../components/MetaTag";
-import { fetchImage } from "face-api.js";
 
 const FaceRecognition: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -9,8 +8,6 @@ const FaceRecognition: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hideRecognize, setHideRecognize] = useState(false);
-  const imgRef = useRef();
-  const canvasRef = useRef();
 
   // Load models
   useEffect(() => {

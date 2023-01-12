@@ -24,12 +24,12 @@ const FaceRecognition: React.FC = () => {
   }, []);
 
   // Go through the db
-  async function fetchImage(label: any, token: any) {
+  async function fetchImage(label: any, i: any, token: any) {
     const headers = {
       Authorization: `Token ${token}`,
       Accept: "application/vnd.github+json",
     };
-    const path = `/repos/juanbric/face-recognition/contents/labeled_images/${label}/1.jpg`;
+    const path = `/repos/juanbric/face-recognition/contents/labeled_images/${label}/${i}.jpg`;
     const url = `https://api.github.com${path}`;
     try {
       const response = await fetch(url, { headers });
@@ -43,12 +43,12 @@ const FaceRecognition: React.FC = () => {
   }
 
   async function recognize(token: any) {
-    const faces = ["Thiago", "Filipa", "Sienna"];
+    const faces = ["Neymar", "Messi", "Cristiano", "Mbappe", "Zidane", "Ronaldinho", "Iniesta"];
     return Promise.all(
       faces.map(async (label) => {
         const descriptions = [];
-        for (let i = 1; i <= 1; i++) {
-          const img = await fetchImage(label, token);
+        for (let i = 1; i <= 2; i++) {
+          const img = await fetchImage(label, token, i);
           const detections = await faceapi
             .detectSingleFace(img)
             .withFaceLandmarks()
@@ -132,7 +132,7 @@ const FaceRecognition: React.FC = () => {
           />
         </>
       ) : (
-        <p className="text-sm text-slate-500">Loading...</p>
+        <p className="text-sm text-slate-500">Cargando...</p>
       )}
 
       {imageUrl && (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import * as faceapi from "face-api.js";
 import MetaTag from "../components/MetaTag";
 import { fetchImage } from "face-api.js";
@@ -9,6 +9,8 @@ const FaceRecognition: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hideRecognize, setHideRecognize] = useState(false);
+  const imgRef = useRef()
+  const canvasRef = useRef()
 
   // Load models
   useEffect(() => {
@@ -22,47 +24,43 @@ const FaceRecognition: React.FC = () => {
   }, []);
 
   // Go through the db
-  async function fetchImage(label:any, token:any) {
+  async function fetchImage(label: any, i: any, token: any) {
     const headers = {
-        'Authorization': `Token ${token}`,
-        'Accept': 'application/vnd.github+json'
+      Authorization: `Token ${token}`,
+      Accept: "application/vnd.github+json",
     };
-    const path = `/repos/juanbric/face-recognition/contents/labeled_images/${label}/1.jpg`;
+    const path = `/repos/juanbric/face-recognition/contents/labeled_images/${label}/${i}.jpg`;
     const url = `https://api.github.com${path}`;
     try {
-        const response = await fetch(url, { headers });
-        const json = await response.json();
-        const imgUrl = json.download_url;
-        return await faceapi.fetchImage(imgUrl);
-    } catch (err:any) {
-        console.error(err);
-        throw new Error(`Failed to fetch image: ${err.message}`);
+      const response = await fetch(url, { headers });
+      const json = await response.json();
+      const imgUrl = json.download_url;
+      return await faceapi.fetchImage(imgUrl);
+    } catch (err: any) {
+      console.error(err);
+      throw new Error(`Failed to fetch image: ${err.message}`);
     }
-}
+  }
 
-async function recognize(token:any) {
-    const faces = [
-      "Thiago",
-      "Filipa",
-      "Sienna",
-    ];
+  async function recognize(token: any) {
+    const faces = ["Neymar", "Messi", "Cristiano", "Mbappe", "Zidane", "Ronaldinho", "Iniesta"];
     return Promise.all(
-        faces.map(async (label) => {
-            const descriptions = [];
-            for (let i = 1; i <= 1; i++) {
-                const img = await fetchImage(label, token);
-                const detections = await faceapi
-                    .detectSingleFace(img)
-                    .withFaceLandmarks()
-                    .withFaceDescriptor();
-                    if (detections) {
-                      descriptions.push(detections.descriptor);
-                  }
-            }
-            return new faceapi.LabeledFaceDescriptors(label, descriptions);
-        })
+      faces.map(async (label) => {
+        const descriptions = [];
+        for (let i = 1; i <= 2; i++) {
+          const img = await fetchImage(label, token, i);
+          const detections = await faceapi
+            .detectSingleFace(img)
+            .withFaceLandmarks()
+            .withFaceDescriptor();
+          if (detections) {
+            descriptions.push(detections.descriptor);
+          }
+        }
+        return new faceapi.LabeledFaceDescriptors(label, descriptions);
+      })
     );
-}
+  }
   // Handle recognition
   const handleRecognition = async () => {
     if (!imageUrl) {
@@ -85,7 +83,9 @@ async function recognize(token:any) {
     const faceDescriptors = detections.map((detection) => detection.descriptor);
 
     // Create a face matcher with the face descriptor objects from the database
-    const labeledFaceDescriptors = await recognize("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");
+    const labeledFaceDescriptors = await recognize(
+      "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"
+    );
     const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6);
 
     // Find the best match for each face descriptor
@@ -132,7 +132,7 @@ async function recognize(token:any) {
           />
         </>
       ) : (
-        <p className="text-sm text-slate-500">Loading...</p>
+        <p className="text-sm text-slate-500">Cargando...</p>
       )}
 
       {imageUrl && (
@@ -148,8 +148,10 @@ async function recognize(token:any) {
           )}
 
           {/* Image */}
-          <img src={imageUrl} alt="Selected" width={400} />
-
+          <div>
+            <img src={imageUrl} alt="Selected" width={400} height={300} />
+            <canvas width={400} height={300} />
+          </div>
           {/* Loading results */}
           {isLoading ? (
             <p className="text-sm text-slate-500 mt-2">

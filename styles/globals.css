@@ -7,10 +7,15 @@
   body {
     font-family: "Montserrat", "Hind Madurai", sans-serif, "Lora", serif;
   }
+  canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
 }
 
 @layer components {
-  .canvas {
+  canvas {
     position: absolute;
     top: 0;
     left: 0;

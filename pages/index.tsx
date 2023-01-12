@@ -200,9 +200,9 @@ const FaceRecognition: React.FC = () => {
 
           {/* Recognition results */}
           {faceMatches && (
-            <HStack>
+            <HStack className="mt-2">
               {faceMatches.map((match, i) => (
-                <div className="text-lg text-bold text-slate-500 mt-2" key={i}>
+                <div className="text-lg text-bold mr-2 text-slate-500" key={i}>
                   {match
                     .replace(/\(.*\)/g, "")
                     .replace(/^\w/, (c) => c.toUpperCase())}

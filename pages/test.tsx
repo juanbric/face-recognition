@@ -6,7 +6,6 @@ import * as faceapi from "face-api.js";
 import { LabeledFaceDescriptors } from "face-api.js";
 import { useEffect, useRef, useState } from "react";
 
-const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
 

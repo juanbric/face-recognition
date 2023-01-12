@@ -15,11 +15,6 @@
 }
 
 @layer components {
-  canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
   input[type='file']::after {
     content: "";
   }

@@ -1,6 +1,6 @@
 import * as faceapi from "face-api.js";
-import { useEffect, useRef } from "react";
-import MetaTag from "../components/MetaTag";
+import { LabeledFaceDescriptors } from "face-api.js";
+import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
   const imgRef = useRef(null);

@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.4.8",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
     "@next/font": "13.0.7",
     "@types/node": "18.11.17",
     "@types/react": "18.0.26",
@@ -17,6 +20,7 @@
     "eslint-config-next": "13.0.7",
     "face-api.js": "^0.22.2",
     "firebase": "^9.15.0",
+    "framer-motion": "^6.5.1",
     "next": "13.0.7",
     "react": "18.2.0",
     "react-dom": "18.2.0",

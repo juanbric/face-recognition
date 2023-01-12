@@ -9,8 +9,8 @@ const FaceRecognition: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hideRecognize, setHideRecognize] = useState(false);
-  const imgRef = useRef();
-  const canvasRef = useRef();
+  const imgRef = useRef()
+  const canvasRef = useRef()
 
   // Load models
   useEffect(() => {
@@ -24,49 +24,41 @@ const FaceRecognition: React.FC = () => {
   }, []);
 
   // Go through the db
-  async function fetchImage(label:any, i:any, token:any) {
+  async function fetchImage(label: any, i: any, token: any) {
     const headers = {
-        'Authorization': `Token ${token}`,
-        'Accept': 'application/vnd.github+json'
+      Authorization: `Token ${token}`,
+      Accept: "application/vnd.github+json",
     };
     const path = `/repos/juanbric/face-recognition/contents/labeled_images/${label}/${i}.jpg`;
     const url = `https://api.github.com${path}`;
     try {
-        const response = await fetch(url, { headers });
-        const json = await response.json();
-        const imgUrl = json.download_url;
-        return await faceapi.fetchImage(imgUrl);
-    } catch (err:any) {
-        console.error(err);
-        throw new Error(`Failed to fetch image: ${err.message}`);
+      const response = await fetch(url, { headers });
+      const json = await response.json();
+      const imgUrl = json.download_url;
+      return await faceapi.fetchImage(imgUrl);
+    } catch (err: any) {
+      console.error(err);
+      throw new Error(`Failed to fetch image: ${err.message}`);
     }
-}
+  }
 
   async function recognize(token: any) {
-    const faces = [
-      "Neymar",
-      "Messi",
-      "Cristiano",
-      "Mbappe",
-      "Zidane",
-      "Ronaldinho",
-      "Iniesta",
-    ];
+    const faces = ["Neymar", "Messi", "Cristiano", "Mbappe", "Zidane", "Ronaldinho", "Iniesta"];
     return Promise.all(
-     faces.map(async (label) => {
-            const descriptions = [];
-            for (let i = 1; i <= 2; i++) {
-                const img = await fetchImage(label, i, token);
-                const detections = await faceapi
-                    .detectSingleFace(img)
-                    .withFaceLandmarks()
-                    .withFaceDescriptor();
-                    if (detections) {
-                      descriptions.push(detections.descriptor);
-                  }
-            }
-            return new faceapi.LabeledFaceDescriptors(label, descriptions);
-        })
+      faces.map(async (label) => {
+        const descriptions = [];
+        for (let i = 1; i <= 2; i++) {
+          const img = await fetchImage(label, token, i);
+          const detections = await faceapi
+            .detectSingleFace(img)
+            .withFaceLandmarks()
+            .withFaceDescriptor();
+          if (detections) {
+            descriptions.push(detections.descriptor);
+          }
+        }
+        return new faceapi.LabeledFaceDescriptors(label, descriptions);
+      })
     );
   }
   // Handle recognition
@@ -129,7 +121,6 @@ const FaceRecognition: React.FC = () => {
         description={"Aplicación de detección y ¨Rreconocimiento facial"}
       />
 
-      <p className="text-sm text-slate-500 pb-8">Actual base de datos: Cristiano Ronaldo, Messi, Mbappe, Neymar, Ronaldinho, Iniesta y Zidane</p>
       {/* Input field */}
       {loaded === true ? (
         <>

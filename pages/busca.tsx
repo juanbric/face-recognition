@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import MetaTag from "../components/MetaTag";
 import { storage } from "../config/firebase";
 
-const images = () => {
+const Busca = () => {
     const [imageUrls, setImageUrls] = useState([] as string[]);
   const imagesListRef = ref(storage, "images/");
 
@@ -27,4 +27,4 @@ const images = () => {
   );
 };
 
-export default images;
+export default Busca;

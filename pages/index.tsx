@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as faceapi from "face-api.js";
 import MetaTag from "../components/MetaTag";
-import { HStack } from "@chakra-ui/react"
+//@ts-ignore
+import { HStack } from "@chakra-ui/react";
+import Upload from "../components/Upload";
 
-const FaceRecognition: React.FC = () => {
+const Sube: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [faceMatches, setFaceMatches] = useState<string[] | null>(null);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [imageUpload, setImageUpload] = useState<File>();
   const [hideRecognize, setHideRecognize] = useState(false);
   const canvasRef = useRef(null);
 
@@ -110,7 +113,7 @@ const FaceRecognition: React.FC = () => {
     );
     const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.5);
 
-    const results = resized.map(d => faceMatcher.findBestMatch(d.descriptor))
+    const results = resized.map((d) => faceMatcher.findBestMatch(d.descriptor));
     // Find the best match for each face descriptor
     const matches = faceDescriptors.map((descriptor) =>
       faceMatcher.findBestMatch(descriptor).toString()
@@ -126,7 +129,7 @@ const FaceRecognition: React.FC = () => {
     if (!file) {
       return;
     }
-
+    setImageUpload(file);
     setFaceMatches([]);
     setHideRecognize(false);
 
@@ -150,14 +153,12 @@ const FaceRecognition: React.FC = () => {
       </p>
       {/* Input field */}
       {loaded === true ? (
-        <>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="text-sm pl-0 lg:pl-14 text-slate-500 file:mr-4 file:py-2 mb-8 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 first-letter:hover:file:bg-violet-100"
-          />
-        </>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          className="text-sm pl-0 lg:pl-14 text-slate-500 file:mr-4 file:py-2 mb-8 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 first-letter:hover:file:bg-violet-100"
+        />
       ) : (
         <p className="text-sm text-slate-500">Cargando...</p>
       )}
@@ -168,7 +169,7 @@ const FaceRecognition: React.FC = () => {
           {hideRecognize ? null : (
             <button
               onClick={handleRecognition}
-              className=" text-sm py-2 mb-4 px-4 rounded-full border-0 font-semibold bg-violet-50 text-violet-700 hover:bg-violet-100"
+              className="text-sm py-2 mb-4 px-4 rounded-full border-0 font-semibold bg-violet-50 text-violet-700 hover:bg-violet-100"
             >
               ¡Reconoce!
             </button>
@@ -199,16 +200,25 @@ const FaceRecognition: React.FC = () => {
           ) : null}
 
           {/* Recognition results */}
-          {faceMatches && (
-            <HStack className="mt-2">
-              {faceMatches.map((match, i) => (
-                <div className="text-lg text-bold mr-2 text-slate-500" key={i}>
-                  {match
-                    .replace(/\(.*\)/g, "")
-                    .replace(/^\w/, (c) => c.toUpperCase())}
-                </div>
-              ))}
-            </HStack>
+          {faceMatches?.length == 0 ? null : (
+            <>
+              <HStack className="mt-2">
+                {faceMatches &&
+                  faceMatches.map((match, i) => (
+                    <div
+                      className="text-lg text-bold mr-2 text-slate-500"
+                      key={i}
+                    >
+                      {match
+                        .replace(/\(.*\)/g, "")
+                        .replace(/^\w/, (c) => c.toUpperCase())}
+                    </div>
+                  ))}
+              </HStack>
+              {faceMatches && (
+                <Upload faceMatches={faceMatches.map(name => name.split(' (')[0]).join(' ') + ' '} imageUpload={imageUpload} />
+              )}
+            </>
           )}
         </>
       )}
@@ -216,4 +226,4 @@ const FaceRecognition: React.FC = () => {
   );
 };
 
-export default FaceRecognition;
+export default Sube;

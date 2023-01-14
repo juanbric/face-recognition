@@ -2,7 +2,7 @@ import * as faceapi from "face-api.js";
 import { useEffect, useRef } from "react";
 import MetaTag from "../components/MetaTag";
 
-export default function Home() {
+export default function test() {
   const imgRef = useRef(null);
   const canvasRef = useRef(null);
 

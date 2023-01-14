@@ -12,7 +12,7 @@ const Login = () => {
     const logIn = onAuthStateChanged(auth, (user) => {
       if (user) {
         const docuRef = doc(firestore, `usuarios/${user?.uid}`);
-        setDoc(docuRef, { correo: user?.email, rol: whiteList.includes(user?.email) ? "admin" : "user"});
+        setDoc(docuRef, { correo: user?.email, rol: whiteList.includes(user?.email!) ? "admin" : "user"});
         console.log("user data sent to Firestore", user?.email);
         router.replace("/home");
       }

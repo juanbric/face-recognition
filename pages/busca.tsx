@@ -4,24 +4,46 @@ import MetaTag from "../components/MetaTag";
 import { storage } from "../config/firebase";
 
 const Busca = () => {
-    const [imageUrls, setImageUrls] = useState([] as string[]);
+  const [imageUrls, setImageUrls] = useState([] as string[]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredUrls, setFilteredUrls] = useState([] as string[]);
   const imagesListRef = ref(storage, "images/");
 
   useEffect(() => {
     listAll(imagesListRef).then((response) => {
       response.items.forEach((item) => {
         getDownloadURL(item).then((url) => {
-            setImageUrls((prev) => [...prev, url]);
+          setImageUrls((prev) => [...prev, url]);
         });
-    });
+      });
     });
   }, []);
 
+  useEffect(() => {
+    setFilteredUrls(
+        imageUrls.filter(url => {
+            const fileName = url.split("%2F")[1].split("?")[0];
+            const search = new RegExp(searchTerm, 'i');
+            return search.test(fileName);
+        })
+    );
+}, [searchTerm]);
+
+console.log("search", searchTerm)
+
   return (
-    <div className="py-16 flex flex-col items-center justify-center">
+    <div className="py-8 flex flex-col items-center justify-center">
       <MetaTag title={"Firebase"} description={undefined} />
-      {imageUrls.map((url, i) => {
-        return <img key={i} src={url} />;
+
+      <input
+        type="text"
+        className="outline-none bg-[#f6f6f6] text-sm shadow-xl w-1/3 text-slate-500 p-2 rounded-lg"
+        placeholder="Search by file name"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+      {!searchTerm ? null : filteredUrls.map((url, i) => {
+        return <img key={i} width={400} height={300} src={url} className="p-4" />;
       })}
     </div>
   );

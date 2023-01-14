@@ -29,20 +29,20 @@ export default function test() {
     faceapi.draw.drawDetections(canvasRef.current, resized,);
   };
 
-  useEffect(() => {
-    const loadModels = () => {
-      Promise.all([
-        faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
-        faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
-        faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
-        faceapi.nets.faceExpressionNet.loadFromUri("/models"),
-      ])
-        .then(handleImage)
-        .catch((e) => console.log(e));
-    };
+  // useEffect(() => {
+  //   const loadModels = () => {
+  //     Promise.all([
+  //       faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
+  //       faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
+  //       faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
+  //       faceapi.nets.faceExpressionNet.loadFromUri("/models"),
+  //     ])
+  //       .then(handleImage)
+  //       .catch((e) => console.log(e));
+  //   };
 
-    imgRef.current && loadModels();
-  }, []);
+  //   imgRef.current && loadModels();
+  // }, []);
 
   return (
     <div className="flex">

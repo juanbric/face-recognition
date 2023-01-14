@@ -3,8 +3,8 @@ import { useEffect, useRef } from "react";
 import MetaTag from "../components/MetaTag";
 
 export default function test() {
-  const imgRef = useRef(null);
-  const canvasRef = useRef(null);
+  // const imgRef = useRef(null);
+  // const canvasRef = useRef(null);
 
   // Detect faces and draw bos
   const handleImage = async () => {
@@ -49,14 +49,14 @@ export default function test() {
       <MetaTag title={"Test"} description={undefined} />
       <img
         crossOrigin="anonymous"
-        ref={imgRef}
+        // ref={imgRef}
         src="/2.jpg"
         width="940"
         height="650"
         style={{ width: "650px", height: "650px", display: "block", margin: "0 auto" }}
       />
       <canvas
-        ref={canvasRef}
+        // ref={canvasRef}
         style={{width: '650px', height: '650px', position: 'absolute', left: '50%', transform: 'translateX(-50%)'}}
       />
     </div>

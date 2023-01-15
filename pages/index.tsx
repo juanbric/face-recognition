@@ -4,6 +4,9 @@ import MetaTag from "../components/MetaTag";
 //@ts-ignore
 import { HStack } from "@chakra-ui/react";
 import Upload from "../components/Upload";
+import useGetRol from "../hooks/useGetRol";
+import useLogOut from "../hooks/useLogOut";
+import router from "next/router";
 
 const Sube: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -13,7 +16,9 @@ const Sube: React.FC = () => {
   const [imageUpload, setImageUpload] = useState<File>();
   const [hideRecognize, setHideRecognize] = useState(false);
   const canvasRef = useRef(null);
-
+  const rol = useGetRol();
+  useLogOut();
+  rol?.rol === "guest" && router.replace("/login");
   // Load models
   useEffect(() => {
     async function loadModels() {
@@ -157,7 +162,7 @@ const Sube: React.FC = () => {
           type="file"
           accept="image/*"
           onChange={handleImageChange}
-          className="text-sm pl-0 lg:pl-14 text-slate-500 file:mr-4 file:py-2 mb-8 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 first-letter:hover:file:bg-violet-100"
+          className="text-sm pl-0 lg:pl-14 text-slate-500 file:mr-4 file:py-2 mb-8 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 first-letter:hover:file:bg-blue-100"
         />
       ) : (
         <p className="text-sm text-slate-500">Cargando...</p>
@@ -169,7 +174,7 @@ const Sube: React.FC = () => {
           {hideRecognize ? null : (
             <button
               onClick={handleRecognition}
-              className="text-sm py-2 mb-4 px-4 rounded-full border-0 font-semibold bg-violet-50 text-violet-700 hover:bg-violet-100"
+              className="text-sm py-2 mb-4 px-4 rounded-full border-0 font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100"
             >
               ¡Reconoce!
             </button>

@@ -15,6 +15,7 @@ const Sube: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [imageUpload, setImageUpload] = useState<File>();
   const [hideRecognize, setHideRecognize] = useState(false);
+  const [formData, setFormData] = useState({ grado: "", fecha: "" });
   const canvasRef = useRef(null);
   const rol = useGetRol();
   useLogOut();
@@ -145,6 +146,12 @@ const Sube: React.FC = () => {
     reader.readAsDataURL(file);
   };
 
+  // Handle tags change
+  const handleTagsChange = (event: any) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
   return (
     <div className="py-16 flex flex-col items-center justify-center">
       <MetaTag
@@ -221,7 +228,42 @@ const Sube: React.FC = () => {
                   ))}
               </HStack>
               {faceMatches && (
-                <Upload faceMatches={faceMatches.map(name => name.split(' (')[0]).join(' ') + ' '} imageUpload={imageUpload} />
+                <form className="mt-8 text-lg text-bold mr-2 text-slate-500">
+                  <label>
+                    Grado: 
+                    <input
+                      type="text"
+                      name="grado"
+                      className="ml-4 outline-none p-1 rounded-[12px] w-10 bg-[#f6f6f6] mb-4"
+                      value={formData.grado}
+                      onChange={handleTagsChange}
+                    />
+                  </label>
+                  <br />
+                  <label>
+                    Fecha:
+                    <input
+                      type="text"
+                      name="fecha"
+                      className="ml-4 outline-none p-1 rounded-[12px] w-[120px] bg-[#f6f6f6]"
+                      value={formData.fecha}
+                      onChange={handleTagsChange}
+                    />
+                  </label>
+                  <br />
+                </form>
+              )}
+
+              {faceMatches && formData.fecha && formData.grado && (
+                <Upload
+                  grado={formData.grado}
+                  fecha={formData.fecha}
+                  faceMatches={
+                    faceMatches.map((name) => name.split(" (")[0]).join(" ") +
+                    " "
+                  }
+                  imageUpload={imageUpload}
+                />
               )}
             </>
           )}

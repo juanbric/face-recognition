@@ -18,7 +18,7 @@ const Upload = ({ imageUpload, faceMatches }: { imageUpload: any, faceMatches: a
 
   return (
     <button
-      className="text-sm py-2 mb-4 px-4 rounded-full border-0 font-semibold bg-violet-50 text-violet-700 mt-8 hover:bg-violet-100"
+      className="text-sm py-2 mb-4 px-4 rounded-full border-0 font-semibold bg-blue-50 text-blue-700 mt-8 hover:bg-blue-100"
       onClick={uploadImage}
     >
       Upload image

@@ -1,13 +1,20 @@
 import { getDownloadURL, listAll, ref } from "firebase/storage";
+import router from "next/router";
 import React, { useEffect, useState } from "react";
 import MetaTag from "../components/MetaTag";
 import { storage } from "../config/firebase";
+import useGetRol from "../hooks/useGetRol";
+import useLogOut from "../hooks/useLogOut";
 
 const Busca = () => {
   const [imageUrls, setImageUrls] = useState([] as string[]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredUrls, setFilteredUrls] = useState([] as string[]);
   const imagesListRef = ref(storage, "images/");
+  
+  const rol = useGetRol();
+  useLogOut();
+  rol?.rol === "guest" && router.replace("/login");
 
   useEffect(() => {
     listAll(imagesListRef).then((response) => {

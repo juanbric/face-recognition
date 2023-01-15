@@ -5,6 +5,7 @@ import { ref, uploadBytes } from "firebase/storage";
 import { v4 } from "uuid";
 import { SimpleModal } from "./SimpleModal";
 import Link from "next/link";
+import router from "next/router";
 
 const Upload = ({
   imageUpload,
@@ -18,6 +19,7 @@ const Upload = ({
   fecha: any;
 }) => {
   const [submit, setSubmit] = useState(false);
+  const [hasClosedModal, setHasClosedModal] = useState(false);
 
   const uploadImage = () => {
     if (imageUpload == null) return;
@@ -30,6 +32,14 @@ const Upload = ({
       setSubmit(true);
     });
   };
+
+  useEffect(() => {
+    if (!hasClosedModal && submit) {
+      setHasClosedModal(true);
+    } else if (hasClosedModal && !submit) {
+      window.location.reload();
+    }
+  }, [submit, hasClosedModal]);
 
   return (
     <>

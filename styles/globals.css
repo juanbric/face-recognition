@@ -14,8 +14,8 @@
     content: "";
   }
   canvas {
-    width: 520px;
-    height: 300px;
+    width: 700px;
+    height: 400px;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);

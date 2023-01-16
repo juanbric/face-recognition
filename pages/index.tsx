@@ -100,7 +100,7 @@ const Sube: React.FC = () => {
 
     // Load the image into an HTMLImageElement
     const img = await faceapi.fetchImage(imageUrl);
-    setImgSize(img)
+    setImgSize(img);
 
     //@ts-ignore
     canvasRef.current.innerHTML = "";
@@ -158,10 +158,10 @@ const Sube: React.FC = () => {
   };
 
   return (
-    <div className="py-6 flex flex-col items-center justify-center">
+    <div className="py-6">
       <MetaTag title={"Reconoce"} />
-      <div className="grid grid-cols-2">
-        <div>
+      <div className="grid grid-cols-3 gap-8 justify-start">
+        <div className="col-span-2">
           <InputField loaded={loaded} handleImageChange={handleImageChange} />
           {imageUrl && (
             <PreviewImage
@@ -171,31 +171,30 @@ const Sube: React.FC = () => {
             />
           )}
         </div>
-        <div>
+        <div className="mt-16">
           {imageUrl && (
+            <RecognizeButton
+              showRecognize={showRecognize}
+              handleRecognition={handleRecognition}
+            />
+          )}
+          <p className="text-lg text-bold text-slate-500 mt-4">Resultados</p>
+          <p className="text-sm text-slate-500">Aqui aparece si la foto se puede publicar</p>
+          {imageUrl && faceMatches?.length == 0 ? null : (
             <>
-              <RecognizeButton
-                showRecognize={showRecognize}
-                handleRecognition={handleRecognition}
+              <Tags
+                faceMatches={faceMatches}
+                formData={formData}
+                handleTagsChange={handleTagsChange}
               />
-              {faceMatches?.length == 0 ? null : (
-                <>
-                  <Tags
-                    faceMatches={faceMatches}
-                    formData={formData}
-                    handleTagsChange={handleTagsChange}
-                  />
-                  <Upload
-                    formData={formData}
-                    faceMatches={
-                      faceMatches &&
-                      faceMatches.map((name) => name.split(" (")[0]).join(" ") +
-                        " "
-                    }
-                    imageUpload={imageUpload}
-                  />
-                </>
-              )}
+              <Upload
+                formData={formData}
+                faceMatches={
+                  faceMatches &&
+                  faceMatches.map((name) => name.split(" (")[0]).join(" ") + " "
+                }
+                imageUpload={imageUpload}
+              />
             </>
           )}
         </div>

@@ -10,30 +10,34 @@ const Tags = ({
   return (
     <>
       {faceMatches && (
-        <form className="mt-[148px] text-lg text-bold mr-2 text-slate-500">
-          <label>
-            Grado:
-            <input
-              type="text"
-              name="grado"
-              className="ml-4 outline-none p-1 rounded-[12px] w-10 bg-[#f6f6f6] mb-4"
-              value={formData.grado}
-              onChange={handleTagsChange}
-            />
-          </label>
-          <br />
-          <label>
-            Fecha:
-            <input
-              type="text"
-              name="fecha"
-              className="ml-4 outline-none p-1 rounded-[12px] w-[120px] bg-[#f6f6f6]"
-              value={formData.fecha}
-              onChange={handleTagsChange}
-            />
-          </label>
-          <br />
-        </form>
+        <>
+          <p className="text-lg text-slate-500 mt-6">
+            Añada etiquetas correspondientes para subir foto a base de datos
+          </p>
+          <form className="mt-4 text-sm text-bold mr-1 text-slate-500">
+            <label>
+              Grado:
+              <input
+                type="text"
+                name="grado"
+                className="ml-2 text-sm text-slate-500 outline-none p-1 rounded-[8px] w-10 bg-blue-50 mb-4"
+                value={formData.grado}
+                onChange={handleTagsChange}
+              />
+            </label>
+            <br />
+            <label>
+              Fecha:
+              <input
+                type="text"
+                name="fecha"
+                className="ml-2 text-sm text-slate-500 outline-none p-1 rounded-[8px] w-[120px] bg-blue-50"
+                value={formData.fecha}
+                onChange={handleTagsChange}
+              />
+            </label>
+          </form>
+        </>
       )}
     </>
   );

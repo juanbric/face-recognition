@@ -16,7 +16,7 @@ const PreviewImage = ({
       </div>
       {/* Loading results */}
       {isLoading ? (
-        <p className="text-sm text-slate-500 mt-2">
+        <p className="text-sm text-slate-500 mt-6">
           Cargando resultados de reconocimiento...
         </p>
       ) : null}

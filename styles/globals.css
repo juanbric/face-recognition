@@ -10,12 +10,14 @@
 }
 
 @layer components {
-  input[type='file']::after {
+  input[type="file"]::after {
     content: "";
   }
-  /* canvas {
+  canvas {
+    width: 800px;
+    height: 600px;
     position: absolute;
-    top: 0;
-    left: 0;
-  } */
+    left: 50%;
+    transform: translateX(-50%);
+  }
 }

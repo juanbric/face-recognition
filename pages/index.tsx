@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as faceapi from "face-api.js";
 import MetaTag from "../components/MetaTag";
-import { HStack } from "@chakra-ui/react";
 import Upload from "../components/Upload";
 import useGetRol from "../hooks/useGetRol";
 import useLogOut from "../hooks/useLogOut";
@@ -23,6 +22,19 @@ const Sube: React.FC = () => {
   const rol = useGetRol();
   useLogOut();
   rol?.rol === "guest" && router.replace("/login");
+
+  // Clear canvas after image change
+  useEffect(() => {
+    if (imageUrl) {
+      //@ts-ignore
+      const ctx = canvasRef.current.getContext("2d");
+      //@ts-ignore
+      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      //@ts-ignore
+
+      canvasRef.current.innerHTML = "";
+    }
+  }, [imageUrl]);
 
   // Analyse reference images
   async function fetchImage(label: any, i: any, token: any) {
@@ -78,39 +90,41 @@ const Sube: React.FC = () => {
     setShowRecognize(false);
     setIsLoading(true);
 
-    // Load the image into an HTMLImageElement
-    const img = await faceapi.fetchImage(imageUrl);
-
-    // Detect how many faces in the image
-    const detections = await faceapi
-      .detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
-      .withFaceLandmarks()
-      .withFaceDescriptors();
-
-    // Draw squares based on detections
-    const displaySize = { width: img.width, height: img.height };
-    //@ts-ignore
-    canvasRef.current.innerHtml = faceapi.createCanvasFromMedia(img);
-    //@ts-ignore
-    faceapi.matchDimensions(canvasRef.current, displaySize);
-    const resized = faceapi.resizeResults(detections, displaySize);
-    //@ts-ignore
-    faceapi.draw.drawDetections(canvasRef.current, resized);
-
-    // Get the face descriptor objects for the detected faces
-    const faceDescriptors = detections.map((detection) => detection.descriptor);
-
-    // Create a face matcher with the face descriptor objects from the database
     const labeledFaceDescriptors = await recognize(
       "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"
     );
 
     const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.7);
 
-    // Find the best match for each face descriptor
-    const matches = faceDescriptors.map((descriptor) =>
-      faceMatcher.findBestMatch(descriptor).toString()
+    // Load the image into an HTMLImageElement
+    const img = await faceapi.fetchImage(imageUrl);
+
+    //@ts-ignore
+    canvasRef.current.innerHTML = "";
+    const displaySize = { width: 800, height: 600 };
+    //@ts-ignore
+    faceapi.matchDimensions(canvasRef.current, displaySize);
+    const detections = await faceapi
+      .detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
+      .withFaceLandmarks()
+      .withFaceDescriptors();
+    const resizedDetections = faceapi.resizeResults(detections, displaySize);
+    const results = resizedDetections.map((d) =>
+      faceMatcher.findBestMatch(d.descriptor)
     );
+
+    const matches = results.map((result, i) => {
+      const box = resizedDetections[i].detection.box;
+      const drawBox = new faceapi.draw.DrawBox(box, {
+        label: result.toString().replace(/\(.*\)/g, ""),
+        boxColor: "black",
+        lineWidth: 3,
+      });
+      //@ts-ignore
+      drawBox.draw(canvasRef.current);
+      return result.toString();
+    });
+
     setIsLoading(false);
     setFaceMatches(matches);
   };
@@ -123,10 +137,8 @@ const Sube: React.FC = () => {
     }
     // Load state to upload pic to firebase if needed
     setImageUpload(file);
-
     // Show recognize button
     setShowRecognize(true);
-
     // Set imageUrl state to the selected file
     const reader = new FileReader();
     reader.onload = () => {
@@ -155,19 +167,8 @@ const Sube: React.FC = () => {
           />
           {/* Image */}
           <div className="relative">
-            <canvas
-              ref={canvasRef}
-              width={400}
-              height={300}
-              style={{
-                width: "400px",
-                height: "300px",
-                position: "absolute",
-                left: "50%",
-                transform: "translateX(-50%)",
-              }}
-            />
-            <img src={imageUrl} width={400} height={300} />
+            <canvas ref={canvasRef} />
+            <img src={imageUrl} width={800} height={600} />
           </div>
           {/* Loading results */}
           {isLoading ? (
@@ -178,19 +179,6 @@ const Sube: React.FC = () => {
           {/* Recognition results */}
           {faceMatches?.length == 0 ? null : (
             <>
-              <HStack className="mt-2">
-                {faceMatches &&
-                  faceMatches.map((match, i) => (
-                    <div
-                      className="text-lg text-bold mr-2 text-slate-500"
-                      key={i}
-                    >
-                      {match
-                        .replace(/\(.*\)/g, "")
-                        .replace(/^\w/, (c) => c.toUpperCase())}
-                    </div>
-                  ))}
-              </HStack>
               <Tags
                 faceMatches={faceMatches}
                 formData={formData}

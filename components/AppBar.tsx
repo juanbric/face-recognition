@@ -18,7 +18,7 @@ export const AppBar = () => {
   console.log("User metadata", rol);
 
   return (
-    <div className=" bg-white border-b-[0.00001px] border-[#dfd3dc] py-1 lg:py-2">
+    <div className=" bg-white border-b-[0.00001px] border-[#dfd3dc] py-1 lg:py-4">
       <div className="lg:flex lg:justify-center lg:items-center">
         <div className="px-4 lg:px-8 w-auto lg:w-[1130px]">
           <div className="flex text-sm text-slate-500 justify-between items-center">
@@ -44,10 +44,6 @@ export const AppBar = () => {
                       Log out
                     </button>
                     <p>{user?.displayName}</p>
-                    <img
-                      src={user?.photoURL || ""}
-                      className="w-8 h-8 rounded-full"
-                    />
                 </HStack>
               </>
             )}

@@ -34,10 +34,7 @@ const Login = () => {
 
   return (
     <div className="py-16 flex flex-col items-center justify-center">
-      <MetaTag
-        title={"Inicia sesión"}
-        description={"Aplicación de detección y ¨Rreconocimiento facial"}
-      />
+      <MetaTag title={"Inicia sesión"} />
       <h1>Inicia sesión con Google para continuar</h1>
       <button
         className="text-slate px-4 py-2 bg-[#f6f6f6] mt-6 rounded-[16px]"

@@ -1,38 +1,30 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as faceapi from "face-api.js";
 import MetaTag from "../components/MetaTag";
-//@ts-ignore
 import { HStack } from "@chakra-ui/react";
 import Upload from "../components/Upload";
 import useGetRol from "../hooks/useGetRol";
 import useLogOut from "../hooks/useLogOut";
 import router from "next/router";
+import InputField from "../components/InputField";
+import RecognizeButton from "../components/RecognizeButton";
+import Tags from "../components/Tags";
+import useLoadModels from "../hooks/useLoadModels";
 
 const Sube: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [faceMatches, setFaceMatches] = useState<string[] | null>(null);
-  const [loaded, setLoaded] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [imageUpload, setImageUpload] = useState<File>();
-  const [hideRecognize, setHideRecognize] = useState(false);
+  const [showRecognize, setShowRecognize] = useState(false);
   const [formData, setFormData] = useState({ grado: "", fecha: "" });
+  const loaded = useLoadModels();
   const canvasRef = useRef(null);
   const rol = useGetRol();
   useLogOut();
   rol?.rol === "guest" && router.replace("/login");
-  // Load models
-  useEffect(() => {
-    async function loadModels() {
-      await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
-      await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
-      await faceapi.nets.ssdMobilenetv1.loadFromUri("/models");
-      await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
-      setLoaded(true);
-    }
-    loadModels();
-  }, []);
 
-  // Go through the db
+  // Analyse reference images
   async function fetchImage(label: any, i: any, token: any) {
     const headers = {
       Authorization: `Token ${token}`,
@@ -41,7 +33,7 @@ const Sube: React.FC = () => {
     const path = `/repos/juanbric/face-recognition/contents/labeled_images/${label}/${i}.jpg`;
     const url = `https://api.github.com${path}`;
     try {
-      const response = await fetch(url, { headers, cache: 'no-store' });
+      const response = await fetch(url, { headers, cache: "no-store" });
       const json = await response.json();
       const imgUrl = json.download_url;
       return await faceapi.fetchImage(imgUrl);
@@ -78,38 +70,33 @@ const Sube: React.FC = () => {
       })
     );
   }
-  // Handle recognition
+
   const handleRecognition = async () => {
     if (!imageUrl) {
       return;
     }
-    console.log("loading recognition");
-    setHideRecognize(true);
+    setShowRecognize(false);
     setIsLoading(true);
 
     // Load the image into an HTMLImageElement
     const img = await faceapi.fetchImage(imageUrl);
 
-    // Detect the faces in the image
+    // Detect how many faces in the image
     const detections = await faceapi
       .detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
       .withFaceLandmarks()
       .withFaceDescriptors();
-    console.log(detections);
+
+    // Draw squares based on detections
+    const displaySize = { width: img.width, height: img.height };
     //@ts-ignore
     canvasRef.current.innerHtml = faceapi.createCanvasFromMedia(img);
     //@ts-ignore
-    faceapi.matchDimensions(canvasRef.current, {
-      width: 800,
-      height: 600,
-    });
-    const resized = faceapi.resizeResults(detections, {
-      width: 800,
-      height: 600,
-    });
-
+    faceapi.matchDimensions(canvasRef.current, displaySize);
+    const resized = faceapi.resizeResults(detections, displaySize);
     //@ts-ignore
     faceapi.draw.drawDetections(canvasRef.current, resized);
+
     // Get the face descriptor objects for the detected faces
     const faceDescriptors = detections.map((detection) => detection.descriptor);
 
@@ -117,14 +104,13 @@ const Sube: React.FC = () => {
     const labeledFaceDescriptors = await recognize(
       "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"
     );
-    const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.5);
 
-    const results = resized.map((d) => faceMatcher.findBestMatch(d.descriptor));
+    const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.7);
+
     // Find the best match for each face descriptor
     const matches = faceDescriptors.map((descriptor) =>
       faceMatcher.findBestMatch(descriptor).toString()
     );
-    console.log("loading recognition done");
     setIsLoading(false);
     setFaceMatches(matches);
   };
@@ -135,10 +121,13 @@ const Sube: React.FC = () => {
     if (!file) {
       return;
     }
+    // Load state to upload pic to firebase if needed
     setImageUpload(file);
-    setFaceMatches([]);
-    setHideRecognize(false);
 
+    // Show recognize button
+    setShowRecognize(true);
+
+    // Set imageUrl state to the selected file
     const reader = new FileReader();
     reader.onload = () => {
       setImageUrl(reader.result as string);
@@ -154,35 +143,16 @@ const Sube: React.FC = () => {
 
   return (
     <div className="py-6 flex flex-col items-center justify-center">
-      <MetaTag
-        title={"Reconoce"}
-        description={"Aplicación de detección y ¨Rreconocimiento facial"}
-      />
-
+      <MetaTag title={"Reconoce"} />
       {/* Input field */}
-      {loaded === true ? (
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-          className="text-sm pl-0 lg:pl-14 text-slate-500 file:mr-4 file:py-2 mb-8 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 first-letter:hover:file:bg-blue-100"
-        />
-      ) : (
-        <p className="text-sm text-slate-500">Cargando...</p>
-      )}
-
+      <InputField loaded={loaded} handleImageChange={handleImageChange} />
       {imageUrl && (
         <>
           {/* Recognize button */}
-          {hideRecognize ? null : (
-            <button
-              onClick={handleRecognition}
-              className="text-sm py-2 mb-4 px-4 rounded-full border-0 font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100"
-            >
-              ¡Reconoce!
-            </button>
-          )}
-
+          <RecognizeButton
+            showRecognize={showRecognize}
+            handleRecognition={handleRecognition}
+          />
           {/* Image */}
           <div className="relative">
             <canvas
@@ -199,14 +169,12 @@ const Sube: React.FC = () => {
             />
             <img src={imageUrl} width={400} height={300} />
           </div>
-
           {/* Loading results */}
           {isLoading ? (
             <p className="text-sm text-slate-500 mt-2">
               Cargando resultados de reconocimiento...
             </p>
           ) : null}
-
           {/* Recognition results */}
           {faceMatches?.length == 0 ? null : (
             <>
@@ -223,44 +191,19 @@ const Sube: React.FC = () => {
                     </div>
                   ))}
               </HStack>
-              {faceMatches && (
-                <form className="mt-8 text-lg text-bold mr-2 text-slate-500">
-                  <label>
-                    Grado: 
-                    <input
-                      type="text"
-                      name="grado"
-                      className="ml-4 outline-none p-1 rounded-[12px] w-10 bg-[#f6f6f6] mb-4"
-                      value={formData.grado}
-                      onChange={handleTagsChange}
-                    />
-                  </label>
-                  <br />
-                  <label>
-                    Fecha:
-                    <input
-                      type="text"
-                      name="fecha"
-                      className="ml-4 outline-none p-1 rounded-[12px] w-[120px] bg-[#f6f6f6]"
-                      value={formData.fecha}
-                      onChange={handleTagsChange}
-                    />
-                  </label>
-                  <br />
-                </form>
-              )}
-
-              {faceMatches && formData.fecha && formData.grado && (
-                <Upload
-                  grado={formData.grado}
-                  fecha={formData.fecha}
-                  faceMatches={
-                    faceMatches.map((name) => name.split(" (")[0]).join(" ") +
-                    " "
-                  }
-                  imageUpload={imageUpload}
-                />
-              )}
+              <Tags
+                faceMatches={faceMatches}
+                formData={formData}
+                handleTagsChange={handleTagsChange}
+              />
+              <Upload
+                formData={formData}
+                faceMatches={
+                  faceMatches &&
+                  faceMatches.map((name) => name.split(" (")[0]).join(" ") + " "
+                }
+                imageUpload={imageUpload}
+              />
             </>
           )}
         </>

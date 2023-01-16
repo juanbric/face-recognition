@@ -8,13 +8,11 @@ import { SimpleModal } from "./SimpleModal";
 const Upload = ({
   imageUpload,
   faceMatches,
-  grado,
-  fecha,
+  formData,
 }: {
   imageUpload: any;
   faceMatches: any;
-  grado: any;
-  fecha: any;
+  formData: any;
 }) => {
   const [submit, setSubmit] = useState(false);
   const [hasClosedModal, setHasClosedModal] = useState(false);
@@ -24,7 +22,9 @@ const Upload = ({
     //@ts-ignore
     const imageRef = ref(
       storage,
-      `images/${" " + faceMatches + grado + " " + fecha + " " + v4()}`
+      `images/${
+        " " + faceMatches + formData.grado + " " + formData.fecha + " " + v4()
+      }`
     );
     uploadBytes(imageRef, imageUpload).then(() => {
       setSubmit(true);
@@ -41,21 +41,25 @@ const Upload = ({
 
   return (
     <>
-      <button
-        className="text-sm py-2 mb-4 px-4 rounded-full border-0 font-semibold bg-blue-50 text-blue-700 mt-8 hover:bg-blue-100"
-        onClick={uploadImage}
-      >
-        Upload image
-      </button>
+      {faceMatches && formData.fecha && formData.grado && (
+        <>
+          <button
+            className="text-sm py-2 mb-4 px-4 rounded-full border-0 font-semibold bg-blue-50 text-blue-700 mt-8 hover:bg-blue-100"
+            onClick={uploadImage}
+          >
+            Upload image
+          </button>
 
-      <SimpleModal
-        isOpen={submit}
-        onClose={() => {
-          setSubmit(false);
-        }}
-        headerText={"¡Éxito!"}
-        description={`Tu imágen se ha subido exitosamente con sus tags y reconocimientos correspondientes.`}
-      />
+          <SimpleModal
+            isOpen={submit}
+            onClose={() => {
+              setSubmit(false);
+            }}
+            headerText={"¡Éxito!"}
+            description={`Tu imágen se ha subido exitosamente con sus tags y reconocimientos correspondientes.`}
+          />
+        </>
+      )}
     </>
   );
 };

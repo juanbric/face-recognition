@@ -17,6 +17,7 @@ const Sube: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [imageUpload, setImageUpload] = useState<File>();
   const [showRecognize, setShowRecognize] = useState(false);
+  const [imgSize, setImgSize] = useState<any>();
   const [formData, setFormData] = useState({ grado: "", fecha: "" });
   const loaded = useLoadModels();
   const canvasRef = useRef(null);
@@ -95,14 +96,15 @@ const Sube: React.FC = () => {
       "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"
     );
 
-    const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.7);
+    const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.9);
 
     // Load the image into an HTMLImageElement
     const img = await faceapi.fetchImage(imageUrl);
+    setImgSize(img)
 
     //@ts-ignore
     canvasRef.current.innerHTML = "";
-    const displaySize = { width: 800, height: 600 };
+    const displaySize = { width: 520, height: 300 };
     //@ts-ignore
     faceapi.matchDimensions(canvasRef.current, displaySize);
     const detections = await faceapi
@@ -136,6 +138,7 @@ const Sube: React.FC = () => {
     if (!file) {
       return;
     }
+    setImgSize(file);
     // Load state to upload pic to firebase if needed
     setImageUpload(file);
     // Show recognize button
@@ -157,39 +160,46 @@ const Sube: React.FC = () => {
   return (
     <div className="py-6 flex flex-col items-center justify-center">
       <MetaTag title={"Reconoce"} />
-      <InputField loaded={loaded} handleImageChange={handleImageChange} />
-      {imageUrl && (
-        <PreviewImage
-          canvasRef={canvasRef}
-          imageUrl={imageUrl}
-          isLoading={isLoading}
-        />
-      )}
-      {imageUrl && (
-        <>
-          <RecognizeButton
-            showRecognize={showRecognize}
-            handleRecognition={handleRecognition}
-          />
-          {faceMatches?.length == 0 ? null : (
+      <div className="grid grid-cols-2">
+        <div>
+          <InputField loaded={loaded} handleImageChange={handleImageChange} />
+          {imageUrl && (
+            <PreviewImage
+              canvasRef={canvasRef}
+              imageUrl={imageUrl}
+              isLoading={isLoading}
+            />
+          )}
+        </div>
+        <div>
+          {imageUrl && (
             <>
-              <Tags
-                faceMatches={faceMatches}
-                formData={formData}
-                handleTagsChange={handleTagsChange}
+              <RecognizeButton
+                showRecognize={showRecognize}
+                handleRecognition={handleRecognition}
               />
-              <Upload
-                formData={formData}
-                faceMatches={
-                  faceMatches &&
-                  faceMatches.map((name) => name.split(" (")[0]).join(" ") + " "
-                }
-                imageUpload={imageUpload}
-              />
+              {faceMatches?.length == 0 ? null : (
+                <>
+                  <Tags
+                    faceMatches={faceMatches}
+                    formData={formData}
+                    handleTagsChange={handleTagsChange}
+                  />
+                  <Upload
+                    formData={formData}
+                    faceMatches={
+                      faceMatches &&
+                      faceMatches.map((name) => name.split(" (")[0]).join(" ") +
+                        " "
+                    }
+                    imageUpload={imageUpload}
+                  />
+                </>
+              )}
             </>
           )}
-        </>
-      )}
+        </div>
+      </div>
     </div>
   );
 };

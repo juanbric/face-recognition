@@ -39,8 +39,7 @@ export const AppBar = () => {
                     </Link>
                   ) : null}
                 </div>
-                <div>
-                  <HStack>
+                <HStack>
                     <button className="pr-8" onClick={signUserOut}>
                       Log out
                     </button>
@@ -49,8 +48,7 @@ export const AppBar = () => {
                       src={user?.photoURL || ""}
                       className="w-8 h-8 rounded-full"
                     />
-                  </HStack>
-                </div>
+                </HStack>
               </>
             )}
           </div>

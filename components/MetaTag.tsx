@@ -1,11 +1,11 @@
-import Head from 'next/head'
+import Head from "next/head";
 
 export const MetaTag = ({
   title,
   description,
 }: {
-  title: any
-  description: any
+  title: any;
+  description: any;
 }) => {
   return (
     <Head>
@@ -16,7 +16,10 @@ export const MetaTag = ({
       <meta name="publisher" content="Zentra Dev" />
       <link rel="icon" href="https://i.postimg.cc/rpCZS13d/logo.png" />
       <meta http-equiv="content-language" content="es" />
+      <meta http-equiv="cache-control" content="no-cache" />
+      <meta http-equiv="expires" content="0" />
+      <meta http-equiv="pragma" content="no-cache" />
     </Head>
-  )
-}
-export default MetaTag
+  );
+};
+export default MetaTag;

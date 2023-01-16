@@ -41,7 +41,7 @@ const Sube: React.FC = () => {
     const path = `/repos/juanbric/face-recognition/contents/labeled_images/${label}/${i}.jpg`;
     const url = `https://api.github.com${path}`;
     try {
-      const response = await fetch(url, { headers });
+      const response = await fetch(url, { headers, cache: 'no-store' });
       const json = await response.json();
       const imgUrl = json.download_url;
       return await faceapi.fetchImage(imgUrl);
@@ -153,16 +153,12 @@ const Sube: React.FC = () => {
   };
 
   return (
-    <div className="py-16 flex flex-col items-center justify-center">
+    <div className="py-6 flex flex-col items-center justify-center">
       <MetaTag
         title={"Reconoce"}
         description={"Aplicación de detección y ¨Rreconocimiento facial"}
       />
 
-      <p className="text-sm text-slate-500 pb-8">
-        Actual base de datos: Cristiano Ronaldo, Messi, Mbappe, Neymar,
-        Ronaldinho, Iniesta y Zidane
-      </p>
       {/* Input field */}
       {loaded === true ? (
         <input

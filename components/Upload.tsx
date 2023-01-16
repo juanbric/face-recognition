@@ -4,8 +4,6 @@ import { ref, uploadBytes } from "firebase/storage";
 //@ts-ignore
 import { v4 } from "uuid";
 import { SimpleModal } from "./SimpleModal";
-import Link from "next/link";
-import router from "next/router";
 
 const Upload = ({
   imageUpload,

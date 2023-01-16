@@ -9,6 +9,7 @@ import InputField from "../components/InputField";
 import RecognizeButton from "../components/RecognizeButton";
 import Tags from "../components/Tags";
 import useLoadModels from "../hooks/useLoadModels";
+import PreviewImage from "../components/PreviewImage";
 
 const Sube: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -16,6 +17,7 @@ const Sube: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [imageUpload, setImageUpload] = useState<File>();
   const [showRecognize, setShowRecognize] = useState(false);
+  const [imgSize, setImgSize] = useState<any>();
   const [formData, setFormData] = useState({ grado: "", fecha: "" });
   const loaded = useLoadModels();
   const canvasRef = useRef(null);
@@ -94,14 +96,15 @@ const Sube: React.FC = () => {
       "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"
     );
 
-    const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.7);
+    const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.9);
 
     // Load the image into an HTMLImageElement
     const img = await faceapi.fetchImage(imageUrl);
+    setImgSize(img);
 
     //@ts-ignore
     canvasRef.current.innerHTML = "";
-    const displaySize = { width: 800, height: 600 };
+    const displaySize = { width: 520, height: 300 };
     //@ts-ignore
     faceapi.matchDimensions(canvasRef.current, displaySize);
     const detections = await faceapi
@@ -135,6 +138,7 @@ const Sube: React.FC = () => {
     if (!file) {
       return;
     }
+    setImgSize(file);
     // Load state to upload pic to firebase if needed
     setImageUpload(file);
     // Show recognize button
@@ -154,30 +158,29 @@ const Sube: React.FC = () => {
   };
 
   return (
-    <div className="py-6 flex flex-col items-center justify-center">
+    <div className="py-6">
       <MetaTag title={"Reconoce"} />
-      {/* Input field */}
-      <InputField loaded={loaded} handleImageChange={handleImageChange} />
-      {imageUrl && (
-        <>
-          {/* Recognize button */}
-          <RecognizeButton
-            showRecognize={showRecognize}
-            handleRecognition={handleRecognition}
-          />
-          {/* Image */}
-          <div className="relative">
-            <canvas ref={canvasRef} />
-            <img src={imageUrl} width={800} height={600} />
-          </div>
-          {/* Loading results */}
-          {isLoading ? (
-            <p className="text-sm text-slate-500 mt-2">
-              Cargando resultados de reconocimiento...
-            </p>
-          ) : null}
-          {/* Recognition results */}
-          {faceMatches?.length == 0 ? null : (
+      <div className="grid grid-cols-3 gap-8 justify-start">
+        <div className="col-span-2">
+          <InputField loaded={loaded} handleImageChange={handleImageChange} />
+          {imageUrl && (
+            <PreviewImage
+              canvasRef={canvasRef}
+              imageUrl={imageUrl}
+              isLoading={isLoading}
+            />
+          )}
+        </div>
+        <div className="mt-16">
+          {imageUrl && (
+            <RecognizeButton
+              showRecognize={showRecognize}
+              handleRecognition={handleRecognition}
+            />
+          )}
+          <p className="text-lg text-bold text-slate-500 mt-4">Resultados</p>
+          <p className="text-sm text-slate-500">Aqui aparece si la foto se puede publicar</p>
+          {imageUrl && faceMatches?.length == 0 ? null : (
             <>
               <Tags
                 faceMatches={faceMatches}
@@ -194,8 +197,8 @@ const Sube: React.FC = () => {
               />
             </>
           )}
-        </>
-      )}
+        </div>
+      </div>
     </div>
   );
 };

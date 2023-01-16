@@ -1,16 +1,13 @@
 import Head from "next/head";
 
-export const MetaTag = ({
-  title,
-  description,
-}: {
-  title: any;
-  description: any;
-}) => {
+export const MetaTag = ({ title }: { title: any }) => {
   return (
     <Head>
       <title>{title}</title>
-      <meta name="description" content={description} />
+      <meta
+        name="description"
+        content="Aplicación de detección y reconocimiento facial"
+      />
       <meta name="distribution" content="Global" />
       <meta name="creator" content="Juan Pablo Briceno" />
       <meta name="publisher" content="Zentra Dev" />

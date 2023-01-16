@@ -12,10 +12,7 @@ const Alimenta = () => {
 
   return (
     <div className="py-16 flex flex-col items-center justify-center">
-      <MetaTag
-        title={"Alimenta"}
-        description={"Aplicación de detección y reconocimiento facial"}
-      />
+      <MetaTag title={"Alimenta"} />
       Alimenta
     </div>
   );

@@ -26,7 +26,7 @@ export default function test() {
       height: 650,
     });
     //@ts-ignore
-    faceapi.draw.drawDetections(canvasRef.current, resized,);
+    faceapi.draw.drawDetections(canvasRef.current, resized);
   };
 
   // useEffect(() => {
@@ -46,18 +46,29 @@ export default function test() {
 
   return (
     <div className="flex">
-      <MetaTag title={"Test"} description={undefined} />
+      <MetaTag title={"Test"} />
       <img
         crossOrigin="anonymous"
         // ref={imgRef}
         src="/2.jpg"
         width="940"
         height="650"
-        style={{ width: "650px", height: "650px", display: "block", margin: "0 auto" }}
+        style={{
+          width: "650px",
+          height: "650px",
+          display: "block",
+          margin: "0 auto",
+        }}
       />
       <canvas
         // ref={canvasRef}
-        style={{width: '650px', height: '650px', position: 'absolute', left: '50%', transform: 'translateX(-50%)'}}
+        style={{
+          width: "650px",
+          height: "650px",
+          position: "absolute",
+          left: "50%",
+          transform: "translateX(-50%)",
+        }}
       />
     </div>
   );

@@ -11,7 +11,7 @@ const Busca = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredUrls, setFilteredUrls] = useState([] as string[]);
   const imagesListRef = ref(storage, "images/");
-  
+
   const rol = useGetRol();
   useLogOut();
   rol?.rol === "guest" && router.replace("/login");
@@ -28,19 +28,19 @@ const Busca = () => {
 
   useEffect(() => {
     setFilteredUrls(
-        imageUrls.filter(url => {
-            const fileName = url.split("%2F")[1].split("?")[0];
-            const search = new RegExp(searchTerm, 'i');
-            return search.test(fileName);
-        })
+      imageUrls.filter((url) => {
+        const fileName = url.split("%2F")[1].split("?")[0];
+        const search = new RegExp(searchTerm, "i");
+        return search.test(fileName);
+      })
     );
-}, [searchTerm]);
+  }, [searchTerm]);
 
-console.log("search", searchTerm)
+  console.log("search", searchTerm);
 
   return (
     <div className="py-8 flex flex-col items-center justify-center">
-      <MetaTag title={"Firebase"} description={undefined} />
+      <MetaTag title={"Firebase"} />
 
       <input
         type="text"
@@ -49,9 +49,13 @@ console.log("search", searchTerm)
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      {!searchTerm ? null : filteredUrls.map((url, i) => {
-        return <img key={i} width={400} height={300} src={url} className="p-4" />;
-      })}
+      {!searchTerm
+        ? null
+        : filteredUrls.map((url, i) => {
+            return (
+              <img key={i} width={400} height={300} src={url} className="p-4" />
+            );
+          })}
     </div>
   );
 };

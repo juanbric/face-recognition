@@ -10,7 +10,7 @@ const Tags = ({
   return (
     <>
       {faceMatches && (
-        <form className="mt-8 text-lg text-bold mr-2 text-slate-500">
+        <form className="mt-[148px] text-lg text-bold mr-2 text-slate-500">
           <label>
             Grado:
             <input

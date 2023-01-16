@@ -9,6 +9,7 @@ import InputField from "../components/InputField";
 import RecognizeButton from "../components/RecognizeButton";
 import Tags from "../components/Tags";
 import useLoadModels from "../hooks/useLoadModels";
+import PreviewImage from "../components/PreviewImage";
 
 const Sube: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -156,27 +157,20 @@ const Sube: React.FC = () => {
   return (
     <div className="py-6 flex flex-col items-center justify-center">
       <MetaTag title={"Reconoce"} />
-      {/* Input field */}
       <InputField loaded={loaded} handleImageChange={handleImageChange} />
       {imageUrl && (
+        <PreviewImage
+          canvasRef={canvasRef}
+          imageUrl={imageUrl}
+          isLoading={isLoading}
+        />
+      )}
+      {imageUrl && (
         <>
-          {/* Recognize button */}
           <RecognizeButton
             showRecognize={showRecognize}
             handleRecognition={handleRecognition}
           />
-          {/* Image */}
-          <div className="relative">
-            <canvas ref={canvasRef} />
-            <img src={imageUrl} width={800} height={600} />
-          </div>
-          {/* Loading results */}
-          {isLoading ? (
-            <p className="text-sm text-slate-500 mt-2">
-              Cargando resultados de reconocimiento...
-            </p>
-          ) : null}
-          {/* Recognition results */}
           {faceMatches?.length == 0 ? null : (
             <>
               <Tags

@@ -68,6 +68,7 @@ const Sube: React.FC = () => {
             .withFaceDescriptor()
           descriptions.push(detections && detections.descriptor)
         }
+        //@ts-ignore
         return new faceapi.LabeledFaceDescriptors(label, descriptions)
       }),
     )

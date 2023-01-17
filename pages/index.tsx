@@ -11,6 +11,7 @@ import Tags from "../components/Tags";
 import useLoadModels from "../hooks/useLoadModels";
 import PreviewImage from "../components/PreviewImage";
 import useClearCanvas from "../hooks/useClearCanvas";
+import useHandleTagsChange from "../hooks/useHandleTagsChange";
 
 const Sube: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -18,11 +19,10 @@ const Sube: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [imageUpload, setImageUpload] = useState<File>();
   const [showRecognize, setShowRecognize] = useState(false);
-  const [imgSize, setImgSize] = useState<any>();
-  const [formData, setFormData] = useState({ grado: "", fecha: "" });
   const [loadTags, setLoadTags] = useState(false);
   const loaded = useLoadModels();
   const canvasRef = useRef(null);
+  const [formData, handleTagsChange] = useHandleTagsChange();
   const rol = useGetRol();
   useLogOut();
   rol?.rol === "guest" && router.replace("/login");
@@ -89,7 +89,6 @@ const Sube: React.FC = () => {
 
     // Load the image into an HTMLImageElement
     const img = await faceapi.fetchImage(imageUrl);
-    setImgSize(img);
 
     //@ts-ignore
     canvasRef.current.innerHTML = "";
@@ -111,15 +110,13 @@ const Sube: React.FC = () => {
       const formattedName = name.charAt(0).toUpperCase() + name.slice(1);
       const drawBox = new faceapi.draw.DrawBox(box, {
         label: formattedName,
-        boxColor: "black",
+        boxColor: "#6c77e7",
         lineWidth: 0.5,
       });
       //@ts-ignore
       drawBox.draw(canvasRef.current);
       return result.toString();
     });
-    
-
     setIsLoading(false);
     setLoadTags(true);
     setFaceMatches(matches);
@@ -131,7 +128,6 @@ const Sube: React.FC = () => {
     if (!file) {
       return;
     }
-    setImgSize(file);
     // Load state to upload pic to firebase if needed
     setImageUpload(file);
     // Show recognize button
@@ -142,12 +138,6 @@ const Sube: React.FC = () => {
       setImageUrl(reader.result as string);
     };
     reader.readAsDataURL(file);
-  };
-
-  // Handle tags change
-  const handleTagsChange = (event: any) => {
-    const { name, value } = event.target;
-    setFormData({ ...formData, [name]: value });
   };
 
   return (

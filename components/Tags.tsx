@@ -1,15 +1,15 @@
 const Tags = ({
-  faceMatches,
   formData,
   handleTagsChange,
+  loadTags,
 }: {
-  faceMatches: any;
-  formData: any;
-  handleTagsChange: any;
+  formData: any
+  handleTagsChange: any
+  loadTags: any
 }) => {
   return (
     <>
-      {faceMatches && (
+      {loadTags && (
         <>
           <p className="text-lg text-slate-500 mt-6">
             Añada etiquetas correspondientes para subir foto a base de datos
@@ -40,7 +40,7 @@ const Tags = ({
         </>
       )}
     </>
-  );
-};
+  )
+}
 
-export default Tags;
+export default Tags

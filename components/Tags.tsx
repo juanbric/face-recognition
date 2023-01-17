@@ -1,10 +1,8 @@
 const Tags = ({
-  faceMatches,
   formData,
   handleTagsChange,
   loadTags,
 }: {
-  faceMatches: any
   formData: any
   handleTagsChange: any
   loadTags: any

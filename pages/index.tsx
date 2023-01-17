@@ -10,6 +10,7 @@ import RecognizeButton from '../components/RecognizeButton'
 import Tags from '../components/Tags'
 import useLoadModels from '../hooks/useLoadModels'
 import PreviewImage from '../components/PreviewImage'
+import useClearCanvas from '../hooks/useClearCanvas'
 
 const Sube: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
@@ -25,19 +26,7 @@ const Sube: React.FC = () => {
   const rol = useGetRol()
   useLogOut()
   rol?.rol === 'guest' && router.replace('/login')
-
-  // Clear canvas after image change
-  useEffect(() => {
-    if (imageUrl) {
-      //@ts-ignore
-      const ctx = canvasRef.current.getContext('2d')
-      //@ts-ignore
-      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
-      setLoadTags(false)
-      //@ts-ignore
-      canvasRef.current.innerHTML = ''
-    }
-  }, [imageUrl])
+  useClearCanvas(imageUrl, canvasRef, setLoadTags)
 
   // Analyse reference images
   async function fetchImage(label: any, i: any, token: any) {
@@ -52,7 +41,7 @@ const Sube: React.FC = () => {
       const json = await response.json()
       const imgUrl = json.download_url
       return await faceapi.fetchImage(imgUrl)
-    } catch (err:any) {
+    } catch (err) {
       console.error(err)
       throw new Error(`Failed to fetch image: ${err.message}`)
     }
@@ -77,9 +66,7 @@ const Sube: React.FC = () => {
             .detectSingleFace(img)
             .withFaceLandmarks()
             .withFaceDescriptor()
-          if (detections) {
-            descriptions.push(detections.descriptor)
-          }
+          descriptions.push(detections && detections.descriptor)
         }
         return new faceapi.LabeledFaceDescriptors(label, descriptions)
       }),
@@ -187,7 +174,6 @@ const Sube: React.FC = () => {
           {imageUrl && faceMatches?.length == 0 ? null : (
             <>
               <Tags
-                faceMatches={faceMatches}
                 formData={formData}
                 handleTagsChange={handleTagsChange}
                 loadTags={loadTags}

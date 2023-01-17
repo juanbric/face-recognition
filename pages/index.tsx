@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import * as faceapi from "face-api.js";
 import MetaTag from "../components/MetaTag";
 import Upload from "../components/Upload";

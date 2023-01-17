@@ -41,7 +41,7 @@ const Sube: React.FC = () => {
       const json = await response.json()
       const imgUrl = json.download_url
       return await faceapi.fetchImage(imgUrl)
-    } catch (err) {
+    } catch ({err}:{err:any}) {
       console.error(err)
       throw new Error(`Failed to fetch image: ${err.message}`)
     }

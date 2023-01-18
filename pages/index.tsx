@@ -73,7 +73,9 @@ const Sube: React.FC = () => {
     return Promise.all(
       faces.map(async (label) => {
         //Fetch from database and pick the matching one
-        const img = await faceapi.fetchImage('/1.jpg');
+        const img = await faceapi.fetchImage(
+          `https://raw.githubusercontent.com/juanbric/face-recognition/main/labeled_images/Ronaldinho/2.jpg?token=GHSAT0AAAAAAB5ACUWW5BGBY7WZTNTK4KZ6Y6H6LYQ`
+        );
 
         const fullFaceDescription = await faceapi
           .detectSingleFace(img)
@@ -86,8 +88,8 @@ const Sube: React.FC = () => {
           }
           
           const faceDescriptors = [fullFaceDescription.descriptor];
-          console.log("label", label);
           console.log("faceDescriptos", faceDescriptors);
+          console.log("label", label);
         return new faceapi.LabeledFaceDescriptors(label, faceDescriptors);
       })
     );

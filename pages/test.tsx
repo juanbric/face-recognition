@@ -5,48 +5,49 @@ import MetaTag from '../components/MetaTag'
 import { storage } from '../config/firebase'
 
 export default function test() {
-  const [imageReferenceUpload, setImageReferenceUpload] = useState<string[]>([])
-  const [imageUrls, setImageUrls] = useState<string[]>([])
-  const [nameList, setNameList] = useState<string[]>([])
-  const imagesListRef = ref(storage, 'reference/')
+  // const [imageReferenceUpload, setImageReferenceUpload] = useState<string[]>([])
+  // const [imageUrls, setImageUrls] = useState<string[]>([])
+  // const [nameList, setNameList] = useState<string[]>([])
+  // const imagesListRef = ref(storage, 'reference/')
 
-  const uploadReferenceImage = async () => {
-    if (imageReferenceUpload.length === 0) return
-    for (let i = 0; i < imageReferenceUpload.length; i++) {
-      const imageRef = ref(
-        storage,
-        `reference/${imageReferenceUpload[i].name}/${imageReferenceUpload[i].name}`,
-      )
-      await uploadBytes(imageRef, imageReferenceUpload[i]).then((snapshot) => {
-        getDownloadURL(snapshot.ref).then((url) => {
-          setImageUrls((prev) => [...prev, url])
-        })
-      })
-    }
-  }
+  // const uploadReferenceImage = async () => {
+  //   if (imageReferenceUpload.length === 0) return
+  //   for (let i = 0; i < imageReferenceUpload.length; i++) {
+  //     const imageRef = ref(
+  //       storage,
+  //       `reference/${imageReferenceUpload[i].name}/${imageReferenceUpload[i].name}`,
+  //     )
+  //     await uploadBytes(imageRef, imageReferenceUpload[i]).then((snapshot) => {
+  //       getDownloadURL(snapshot.ref).then((url) => {
+  //         setImageUrls((prev) => [...prev, url])
+  //       })
+  //     })
+  //   }
+  // }
 
-  useEffect(() => {
-    listAll(imagesListRef).then((response) => {
+  // useEffect(() => {
+  //   listAll(imagesListRef).then((response) => {
       
-      response.items.forEach((item) => {
-              getDownloadURL(item).then((url) => {
-                setImageUrls((prev) => [...prev, url])
-              })
-            })
+  //     response.items.forEach((item) => {
+  //             getDownloadURL(item).then((url) => {
+  //               setImageUrls((prev) => [...prev, url])
+  //             })
+  //           })
 
-      setNameList(response.items.map(item => item.name.replace(/\.jpg$/, '')))
+  //     setNameList(response.items.map(item => item.name.replace(/\.jpg$/, '')))
       
-    })
-  }, [])
+  //   })
+  // }, [])
 
-  console.log("name array", nameList)
-  console.log("img url array", imageUrls)
+  // console.log("name array", nameList)
+  // console.log("img url array", imageUrls)
 
   return (
     <div className="flex items-center justify-center">
       <MetaTag title={'Test'} />
       <VStack>
-        <input
+        hello
+        {/* <input
           type="file"
           multiple
           onChange={(event:any) => {
@@ -58,7 +59,7 @@ export default function test() {
           onClick={uploadReferenceImage}
         >
           Upload images
-        </button>
+        </button> */}
       </VStack>
     </div>
   )

@@ -12,6 +12,7 @@ import useLoadModels from "../hooks/useLoadModels";
 import PreviewImage from "../components/PreviewImage";
 import useClearCanvas from "../hooks/useClearCanvas";
 import useHandleTagsChange from "../hooks/useHandleTagsChange";
+import { SimpleModal } from "../components/SimpleModal";
 
 const Sube: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -20,6 +21,7 @@ const Sube: React.FC = () => {
   const [imageUpload, setImageUpload] = useState<File>();
   const [showRecognize, setShowRecognize] = useState(false);
   const [loadTags, setLoadTags] = useState(false);
+  const [noMatchesFound, setNoMatchesFound] = useState(false);
   const loaded = useLoadModels();
   const canvasRef = useRef(null);
   const [formData, handleTagsChange] = useHandleTagsChange();
@@ -67,7 +69,6 @@ const Sube: React.FC = () => {
     // Recognition part
     const labeledFaceDescriptors = await recognize();
     const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.55);
-
     // Drawing
     const img = await faceapi.fetchImage(imageUrl);
     //@ts-ignore
@@ -76,14 +77,14 @@ const Sube: React.FC = () => {
     //@ts-ignore
     faceapi.matchDimensions(canvasRef.current, displaySize);
     const detections = await faceapi
-      .detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
-      .withFaceLandmarks()
-      .withFaceDescriptors();
+    .detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
+    .withFaceLandmarks()
+    .withFaceDescriptors();
     const resizedDetections = faceapi.resizeResults(detections, displaySize);
     const results = resizedDetections.map((d) =>
-      faceMatcher.findBestMatch(d.descriptor)
+    faceMatcher.findBestMatch(d.descriptor)
     );
-
+    
     const matches = results.map((result, i) => {
       const box = resizedDetections[i].detection.box;
       const name = result.toString().replace(/\(.*\)/g, "");
@@ -97,6 +98,8 @@ const Sube: React.FC = () => {
       drawBox.draw(canvasRef.current);
       return result.toString();
     });
+    
+    matches.length === 0 && setNoMatchesFound(true)
     setIsLoading(false);
     setLoadTags(true);
     setFaceMatches(matches);
@@ -162,6 +165,9 @@ const Sube: React.FC = () => {
           )}
         </div>
       </div>
+
+
+      <SimpleModal isOpen={noMatchesFound} onClose={() => {setNoMatchesFound(false)}} headerText={"No se encontraron coincidencias"} description={"Es probable que la/s identidad/es de esta foto no esté/n registrada/s en nuestra base de datos de imágenes de referencia. También es posible que la imágen que usted ha subido se encuentre borrosa o no se aprecie con claridad la cara del individuo a identificar. Contacta a un administrador para más información"} />
     </div>
   );
 };

@@ -27,20 +27,20 @@ export default function test() {
 
   useEffect(() => {
     listAll(imagesListRef).then((response) => {
-      
       response.items.forEach((item) => {
-              getDownloadURL(item).then((url) => {
-                setImageUrls((prev) => [...prev, url])
-              })
-            })
+        getDownloadURL(item).then((url) => {
+          setImageUrls((prev) => [...prev, url])
+        })
+      })
 
-      setNameList(response.items.map(item => item.name.replace(/\.jpg$/, '')))
-      
+      setNameList(response.items.map((item) => item.name.replace(/\.jpg$/, '')))
     })
   }, [])
 
-  console.log("name array", nameList)
-  console.log("img url array", imageUrls)
+  console.log('name array', nameList)
+  imageUrls.forEach((item) => {
+    console.log('img url', item)
+    });
 
   return (
     <div className="flex items-center justify-center">
@@ -49,7 +49,7 @@ export default function test() {
         <input
           type="file"
           multiple
-          onChange={(event:any) => {
+          onChange={(event: any) => {
             setImageReferenceUpload((prev) => [...prev, ...event.target.files])
           }}
         />

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import * as faceapi from "face-api.js";
 import MetaTag from "../components/MetaTag";
 import Upload from "../components/Upload";
@@ -12,6 +12,8 @@ import useLoadModels from "../hooks/useLoadModels";
 import PreviewImage from "../components/PreviewImage";
 import useClearCanvas from "../hooks/useClearCanvas";
 import useHandleTagsChange from "../hooks/useHandleTagsChange";
+import { getDownloadURL, listAll, ref } from "firebase/storage";
+import { storage } from "../config/firebase";
 
 const Sube: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -27,6 +29,22 @@ const Sube: React.FC = () => {
   useLogOut();
   rol?.rol === "guest" && router.replace("/login");
   useClearCanvas(imageUrl, canvasRef, setLoadTags);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const imagesListRef = ref(storage, "reference/");
+  const [nameList, setNameList] = useState<string[]>([]);
+
+  useEffect(() => {
+    listAll(imagesListRef).then((response) => {
+      response.items.forEach((item) => {
+        getDownloadURL(item).then((url) => {
+          setImageUrls((prev) => [...prev, url]);
+        });
+      });
+      setNameList(
+        response.items.map((item) => item.name.replace(/\.jpg$/, ""))
+      );
+    });
+  }, []);
 
   // Analyse reference images
   async function fetchImage(label: any, i: any, token: any) {
@@ -47,43 +65,36 @@ const Sube: React.FC = () => {
     }
   }
 
-  async function recognize(token: any) {
-    const faces = [
-      "Neymar",
-      "Messi",
-      "Cristiano",
-      "Mbappe",
-      "Zidane",
-      "Ronaldinho",
-      "Iniesta",
-    ];
-    return Promise.all(
-      faces.map(async (label) => {
-        const descriptions = [];
-        for (let i = 1; i <= 2; i++) {
-          const img = await fetchImage(label, i, token);
-          const detections = await faceapi
-            .detectSingleFace(img)
-            .withFaceLandmarks()
-            .withFaceDescriptor();
-          descriptions.push(detections && detections.descriptor);
+  async function recognize() {
+    const labeledFaceDescriptors = await Promise.all(
+      nameList.map(async (label) => {
+        const img = await faceapi.fetchImage(
+          "https://firebasestorage.googleapis.com/v0/b/juanbri-face-recognition.appspot.com/o/reference%2FNeymar.jpg?alt=media&token=40d253d4-f760-4662-88c8-d82e5c3ffc39"
+        );
+        const fullFaceDescription = await faceapi
+          .detectSingleFace(img)
+          .withFaceLandmarks()
+          .withFaceDescriptor();
+
+        if (!fullFaceDescription) {
+          throw new Error(`no faces detected for ${label}`);
         }
-        //@ts-ignore
-        return new faceapi.LabeledFaceDescriptors(label, descriptions);
+
+        const faceDescriptors = [fullFaceDescription.descriptor];
+        return new faceapi.LabeledFaceDescriptors(label, faceDescriptors);
       })
     );
+    return labeledFaceDescriptors;
   }
 
-  const handleRecognition = async () => {
+const handleRecognition = async () => {
     if (!imageUrl) {
       return;
     }
     setShowRecognize(false);
     setIsLoading(true);
 
-    const labeledFaceDescriptors = await recognize(
-      "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"
-    );
+    const labeledFaceDescriptors = await recognize();
 
     const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.55);
 

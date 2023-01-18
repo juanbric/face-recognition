@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import * as faceapi from "face-api.js";
 import MetaTag from "../components/MetaTag";
 import Upload from "../components/Upload";
@@ -12,6 +12,8 @@ import useLoadModels from "../hooks/useLoadModels";
 import PreviewImage from "../components/PreviewImage";
 import useClearCanvas from "../hooks/useClearCanvas";
 import useHandleTagsChange from "../hooks/useHandleTagsChange";
+import { getDownloadURL, listAll, ref } from "firebase/storage";
+import { storage } from "../config/firebase";
 
 const Sube: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -27,6 +29,22 @@ const Sube: React.FC = () => {
   useLogOut();
   rol?.rol === "guest" && router.replace("/login");
   useClearCanvas(imageUrl, canvasRef, setLoadTags);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const imagesListRef = ref(storage, "reference/");
+  const [nameList, setNameList] = useState<string[]>([]);
+
+  useEffect(() => {
+    listAll(imagesListRef).then((response) => {
+      response.items.forEach((item) => {
+        getDownloadURL(item).then((url) => {
+          setImageUrls((prev) => [...prev, url]);
+        });
+      });
+      setNameList(
+        response.items.map((item) => item.name.replace(/\.jpg$/, ""))
+      );
+    });
+  }, []);
 
   // Analyse reference images
   async function fetchImage(label: any, i: any, token: any) {
@@ -47,29 +65,30 @@ const Sube: React.FC = () => {
     }
   }
 
-  async function recognize(token: any) {
+  async function recognize() {
     const faces = [
-      "Neymar",
-      "Messi",
-      "Cristiano",
-      "Mbappe",
-      "Zidane",
       "Ronaldinho",
       "Iniesta",
     ];
     return Promise.all(
       faces.map(async (label) => {
-        const descriptions = [];
-        for (let i = 1; i <= 2; i++) {
-          const img = await fetchImage(label, i, token);
-          const detections = await faceapi
-            .detectSingleFace(img)
-            .withFaceLandmarks()
-            .withFaceDescriptor();
-          descriptions.push(detections && detections.descriptor);
-        }
-        //@ts-ignore
-        return new faceapi.LabeledFaceDescriptors(label, descriptions);
+        //Fetch from database and pick the matching one
+        const img = await faceapi.fetchImage('/1.jpg');
+
+        const fullFaceDescription = await faceapi
+          .detectSingleFace(img)
+          .withFaceLandmarks()
+          .withFaceDescriptor();
+
+          
+          if (!fullFaceDescription) {
+            throw new Error(`no faces detected for ${label}`);
+          }
+          
+          const faceDescriptors = [fullFaceDescription.descriptor];
+          console.log("label", label);
+          console.log("faceDescriptos", faceDescriptors);
+        return new faceapi.LabeledFaceDescriptors(label, faceDescriptors);
       })
     );
   }
@@ -81,15 +100,12 @@ const Sube: React.FC = () => {
     setShowRecognize(false);
     setIsLoading(true);
 
-    const labeledFaceDescriptors = await recognize(
-      "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"
-    );
-
+    // Recognition
+    const labeledFaceDescriptors = await recognize();
     const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.55);
 
-    // Load the image into an HTMLImageElement
+    // Draw
     const img = await faceapi.fetchImage(imageUrl);
-
     //@ts-ignore
     canvasRef.current.innerHTML = "";
     const displaySize = { width: 520, height: 300 };

@@ -81,10 +81,10 @@ const Sube: React.FC = () => {
     setShowRecognize(false);
     setIsLoading(true);
 
+    // Recognition part
     const labeledFaceDescriptors = await recognize(
       "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"
     );
-
     const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.55);
 
     // Load the image into an HTMLImageElement

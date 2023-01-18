@@ -28,25 +28,6 @@ const Sube: React.FC = () => {
   rol?.rol === "guest" && router.replace("/login");
   useClearCanvas(imageUrl, canvasRef, setLoadTags);
 
-  // Analyse reference images
-  // async function fetchImage(label: any, i: any, token: any) {
-  //   const headers = {
-  //     Authorization: `Token ${token}`,
-  //     Accept: "application/vnd.github+json",
-  //   };
-  //   const path = `/repos/juanbric/face-recognition/contents/labeled_images/${label}/${i}.jpg`;
-  //   const url = `https://api.github.com${path}`;
-  //   try {
-  //     const response = await fetch(url, { headers, cache: "no-store" });
-  //     const json = await response.json();
-  //     // const imgUrl = json.download_url;
-  //     // return await faceapi.fetchImage(imgUrl);
-  //   } catch (err: any) {
-  //     console.error(err);
-  //     throw new Error(`Failed to fetch image: ${err.message}`);
-  //   }
-  // }
-
   async function recognize() {
     const faces = [
       "Neymar",
@@ -61,6 +42,7 @@ const Sube: React.FC = () => {
       faces.map(async (label) => {
         const imgUrl = `/${label}.jpg`;
         const img = await faceapi.fetchImage(imgUrl);
+        // img is equal to the amount of pictures stored in
         const detections = await faceapi
           .detectSingleFace(img)
           .withFaceLandmarks()
@@ -148,21 +130,19 @@ const Sube: React.FC = () => {
             <PreviewImage
               canvasRef={canvasRef}
               imageUrl={imageUrl}
-              isLoading={isLoading}
+              
             />
           )}
         </div>
-        <div className="mt-16">
+        <div className="">
+          <p className="text-lg text-bold text-slate-500 mt-4">Resultados</p>
           {imageUrl && (
             <RecognizeButton
               showRecognize={showRecognize}
               handleRecognition={handleRecognition}
+              isLoading={isLoading}
             />
           )}
-          <p className="text-lg text-bold text-slate-500 mt-4">Resultados</p>
-          <p className="text-sm text-slate-500">
-            Aqui aparece si la foto se puede publicar
-          </p>
           {imageUrl && faceMatches?.length == 0 ? null : (
             <>
               <Tags

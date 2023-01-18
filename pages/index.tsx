@@ -66,41 +66,46 @@ const Sube: React.FC = () => {
   }
 
   async function recognize() {
-    const labeledFaceDescriptors = await Promise.all(
-      nameList.map(async (label) => {
-        const img = await faceapi.fetchImage(
-          "https://firebasestorage.googleapis.com/v0/b/juanbri-face-recognition.appspot.com/o/reference%2FNeymar.jpg?alt=media&token=40d253d4-f760-4662-88c8-d82e5c3ffc39"
-        );
+    const faces = [
+      "Ronaldinho",
+      "Iniesta",
+    ];
+    return Promise.all(
+      faces.map(async (label) => {
+        //Fetch from database and pick the matching one
+        const img = await faceapi.fetchImage('/1.jpg');
+
         const fullFaceDescription = await faceapi
           .detectSingleFace(img)
           .withFaceLandmarks()
           .withFaceDescriptor();
 
-        if (!fullFaceDescription) {
-          throw new Error(`no faces detected for ${label}`);
-        }
-
-        const faceDescriptors = [fullFaceDescription.descriptor];
+          
+          if (!fullFaceDescription) {
+            throw new Error(`no faces detected for ${label}`);
+          }
+          
+          const faceDescriptors = [fullFaceDescription.descriptor];
+          console.log("label", label);
+          console.log("faceDescriptos", faceDescriptors);
         return new faceapi.LabeledFaceDescriptors(label, faceDescriptors);
       })
     );
-    return labeledFaceDescriptors;
   }
 
-const handleRecognition = async () => {
+  const handleRecognition = async () => {
     if (!imageUrl) {
       return;
     }
     setShowRecognize(false);
     setIsLoading(true);
 
+    // Recognition
     const labeledFaceDescriptors = await recognize();
-
     const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.55);
 
-    // Load the image into an HTMLImageElement
+    // Draw
     const img = await faceapi.fetchImage(imageUrl);
-
     //@ts-ignore
     canvasRef.current.innerHTML = "";
     const displaySize = { width: 520, height: 300 };

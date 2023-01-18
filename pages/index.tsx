@@ -29,47 +29,43 @@ const Sube: React.FC = () => {
   useClearCanvas(imageUrl, canvasRef, setLoadTags);
 
   // Analyse reference images
-  async function fetchImage(label: any, i: any, token: any) {
-    const headers = {
-      Authorization: `Token ${token}`,
-      Accept: "application/vnd.github+json",
-    };
-    const path = `/repos/juanbric/face-recognition/contents/labeled_images/${label}/${i}.jpg`;
-    const url = `https://api.github.com${path}`;
-    try {
-      const response = await fetch(url, { headers, cache: "no-store" });
-      const json = await response.json();
-      const imgUrl = json.download_url;
-      return await faceapi.fetchImage(imgUrl);
-    } catch (err: any) {
-      console.error(err);
-      throw new Error(`Failed to fetch image: ${err.message}`);
-    }
-  }
+  // async function fetchImage(label: any, i: any, token: any) {
+  //   const headers = {
+  //     Authorization: `Token ${token}`,
+  //     Accept: "application/vnd.github+json",
+  //   };
+  //   const path = `/repos/juanbric/face-recognition/contents/labeled_images/${label}/${i}.jpg`;
+  //   const url = `https://api.github.com${path}`;
+  //   try {
+  //     const response = await fetch(url, { headers, cache: "no-store" });
+  //     const json = await response.json();
+  //     // const imgUrl = json.download_url;
+  //     // return await faceapi.fetchImage(imgUrl);
+  //   } catch (err: any) {
+  //     console.error(err);
+  //     throw new Error(`Failed to fetch image: ${err.message}`);
+  //   }
+  // }
 
   async function recognize() {
     const faces = [
+      "Neymar",
+      "Messi",
+      "Cristiano",
+      "Mbappe",
+      "Zidane",
       "Ronaldinho",
       "Iniesta",
     ];
     return Promise.all(
       faces.map(async (label) => {
-        //Fetch from database and pick the matching one
-        const img = await faceapi.fetchImage('/1.jpg');
-
-        const fullFaceDescription = await faceapi
+        const imgUrl = `/${label}.jpg`;
+        const img = await faceapi.fetchImage(imgUrl);
+        const detections = await faceapi
           .detectSingleFace(img)
           .withFaceLandmarks()
           .withFaceDescriptor();
-
-          
-          if (!fullFaceDescription) {
-            throw new Error(`no faces detected for ${label}`);
-          }
-          
-          const faceDescriptors = [fullFaceDescription.descriptor];
-          console.log("label", label);
-          console.log("faceDescriptos", faceDescriptors);
+        const faceDescriptors = [detections.descriptor];
         return new faceapi.LabeledFaceDescriptors(label, faceDescriptors);
       })
     );
@@ -86,9 +82,8 @@ const Sube: React.FC = () => {
     const labeledFaceDescriptors = await recognize();
     const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.55);
 
-    // Load the image into an HTMLImageElement
+    // Drawing
     const img = await faceapi.fetchImage(imageUrl);
-
     //@ts-ignore
     canvasRef.current.innerHTML = "";
     const displaySize = { width: 520, height: 300 };

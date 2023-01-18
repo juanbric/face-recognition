@@ -65,6 +65,10 @@ const Sube: React.FC = () => {
           .detectSingleFace(img)
           .withFaceLandmarks()
           .withFaceDescriptor();
+
+        if (!detections) {
+          throw new Error(`no faces detected for ${label}`);
+        }
         const faceDescriptors = [detections.descriptor];
         return new faceapi.LabeledFaceDescriptors(label, faceDescriptors);
       })

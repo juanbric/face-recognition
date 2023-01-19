@@ -21,8 +21,11 @@ export const AppBar = () => {
         <div className="px-4 lg:px-8 w-auto lg:w-[1130px]">
           <div className="flex text-sm text-slate-500 justify-between items-center">
             {/* Logged out and unauthorized view */}
-            {!user || unauthorized ? <Link href={"/login"}>Login</Link> : null}
-
+            <>
+              {!user || unauthorized ? (
+                <Link href={"/login"}>Login</Link>
+              ) : null}
+            </>
             {/* Users and admin view */}
             {user && !unauthorized && (
               <>
@@ -38,10 +41,10 @@ export const AppBar = () => {
                   ) : null}
                 </div>
                 <HStack>
-                    <button className="pr-8" onClick={signUserOut}>
-                      Log out
-                    </button>
-                    <p>{user?.displayName}</p>
+                  <button className="pr-8" onClick={signUserOut}>
+                    Log out
+                  </button>
+                  <p>{user?.displayName}</p>
                 </HStack>
               </>
             )}

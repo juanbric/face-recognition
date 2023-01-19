@@ -31,27 +31,43 @@ const Sube: React.FC = () => {
   useLogOut();
   rol?.rol === "guest" && router.replace("/login");
   useClearCanvas(imageUrl, canvasRef, setLoadTags);
-  const [imageUrls, setImageUrls] = useState<string[]>([])
-  const [nameList, setNameList] = useState<string[]>([])
+  // const [imageUrls, setImageUrls] = useState<string[]>([])
+  // const [nameList, setNameList] = useState<string[]>([])
 
-  const imagesListRef = ref(storage, "reference/");
+  // const imagesListRef = ref(storage, "reference/");
 
-  useEffect(() => {
-    listAll(imagesListRef).then((response) => {
-      response.items.forEach((item) => {
-        getDownloadURL(item).then((url) => {
-          setImageUrls((prev) => [...prev, url]);
-        });
-      });
+  // useEffect(() => {
+  //   listAll(imagesListRef).then((response) => {
+  //     response.items.forEach((item) => {
+  //       getDownloadURL(item).then((url) => {
+  //         setImageUrls((prev) => [...prev, url]);
+  //       });
+  //     });
 
-      setNameList(
-        response.items.map((item) => item.name.replace(/\.jpg$/, ""))
-      );
-    });
-  }, []);
+  //     setNameList(
+  //       response.items.map((item) => item.name.replace(/\.jpg$/, ""))
+  //     );
+  //   });
+  // }, []);
 
-  console.log("imgurl", imageUrls.map(async (img) => img))
- 
+  // async function recognize() {
+    //   return Promise.all(
+    //     nameList.map(async (label, index) => {
+    //       const img = await faceapi.fetchImage(imageUrls[index]);
+    //       const detections = await faceapi
+    //         .detectSingleFace(img)
+    //         .withFaceLandmarks()
+    //         .withFaceDescriptor();
+  
+    //       if (!detections) {
+    //         throw new Error(`no faces detected for ${label}`);
+    //       }
+    //       const faceDescriptors = [detections.descriptor];
+    //       return new faceapi.LabeledFaceDescriptors(label, faceDescriptors);
+    //     })
+    //   );
+    // }
+
   async function recognize() {
     const faces = [
       "Neymar",
@@ -65,7 +81,7 @@ const Sube: React.FC = () => {
     return Promise.all(
       faces.map(async (label) => {
         const imgUrl = `/${label}.jpg`;
-        const img = await faceapi.fetchImage("https://firebasestorage.googleapis.com/v0/b/juanbri-face-recognition.appspot.com/o/reference%2FMbappe.jpg?alt=media&token=11232119-8bd3-41a9-94fd-29958f23ac3e");
+        const img = await faceapi.fetchImage(imgUrl);
         // img is equal to the amount of pictures stored in
         const detections = await faceapi
           .detectSingleFace(img)

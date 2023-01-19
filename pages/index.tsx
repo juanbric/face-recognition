@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import * as faceapi from "face-api.js";
 import MetaTag from "../components/MetaTag";
 import Upload from "../components/Upload";
@@ -13,6 +13,8 @@ import PreviewImage from "../components/PreviewImage";
 import useClearCanvas from "../hooks/useClearCanvas";
 import useHandleTagsChange from "../hooks/useHandleTagsChange";
 import { SimpleModal } from "../components/SimpleModal";
+import { getDownloadURL, listAll, ref } from "firebase/storage";
+import { storage } from "../config/firebase";
 
 const Sube: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -29,7 +31,27 @@ const Sube: React.FC = () => {
   useLogOut();
   rol?.rol === "guest" && router.replace("/login");
   useClearCanvas(imageUrl, canvasRef, setLoadTags);
+  const [imageUrls, setImageUrls] = useState<string[]>([])
+  const [nameList, setNameList] = useState<string[]>([])
 
+  const imagesListRef = ref(storage, "reference/");
+
+  useEffect(() => {
+    listAll(imagesListRef).then((response) => {
+      response.items.forEach((item) => {
+        getDownloadURL(item).then((url) => {
+          setImageUrls((prev) => [...prev, url]);
+        });
+      });
+
+      setNameList(
+        response.items.map((item) => item.name.replace(/\.jpg$/, ""))
+      );
+    });
+  }, []);
+
+  console.log("imgurl", imageUrls.map(async (img) => img))
+ 
   async function recognize() {
     const faces = [
       "Neymar",
@@ -43,7 +65,7 @@ const Sube: React.FC = () => {
     return Promise.all(
       faces.map(async (label) => {
         const imgUrl = `/${label}.jpg`;
-        const img = await faceapi.fetchImage(imgUrl);
+        const img = await faceapi.fetchImage("https://firebasestorage.googleapis.com/v0/b/juanbri-face-recognition.appspot.com/o/reference%2FMbappe.jpg?alt=media&token=11232119-8bd3-41a9-94fd-29958f23ac3e");
         // img is equal to the amount of pictures stored in
         const detections = await faceapi
           .detectSingleFace(img)
@@ -77,14 +99,14 @@ const Sube: React.FC = () => {
     //@ts-ignore
     faceapi.matchDimensions(canvasRef.current, displaySize);
     const detections = await faceapi
-    .detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
-    .withFaceLandmarks()
-    .withFaceDescriptors();
+      .detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
+      .withFaceLandmarks()
+      .withFaceDescriptors();
     const resizedDetections = faceapi.resizeResults(detections, displaySize);
     const results = resizedDetections.map((d) =>
-    faceMatcher.findBestMatch(d.descriptor)
+      faceMatcher.findBestMatch(d.descriptor)
     );
-    
+
     const matches = results.map((result, i) => {
       const box = resizedDetections[i].detection.box;
       const name = result.toString().replace(/\(.*\)/g, "");
@@ -98,8 +120,8 @@ const Sube: React.FC = () => {
       drawBox.draw(canvasRef.current);
       return result.toString();
     });
-    
-    matches.length === 0 && setNoMatchesFound(true)
+
+    matches.length === 0 && setNoMatchesFound(true);
     setIsLoading(false);
     setLoadTags(true);
     setFaceMatches(matches);
@@ -130,11 +152,7 @@ const Sube: React.FC = () => {
         <div className="col-span-2">
           <InputField loaded={loaded} handleImageChange={handleImageChange} />
           {imageUrl && (
-            <PreviewImage
-              canvasRef={canvasRef}
-              imageUrl={imageUrl}
-              
-            />
+            <PreviewImage canvasRef={canvasRef} imageUrl={imageUrl} />
           )}
         </div>
         <div className="">
@@ -166,8 +184,16 @@ const Sube: React.FC = () => {
         </div>
       </div>
 
-
-      <SimpleModal isOpen={noMatchesFound} onClose={() => {setNoMatchesFound(false)}} headerText={"No se encontraron coincidencias"} description={"Es probable que la/s identidad/es de esta foto no esté/n registrada/s en nuestra base de datos de imágenes de referencia. También es posible que la imágen que usted ha subido se encuentre borrosa o no se aprecie con claridad la cara del individuo a identificar. Contacta a un administrador para más información"} />
+      <SimpleModal
+        isOpen={noMatchesFound}
+        onClose={() => {
+          setNoMatchesFound(false);
+        }}
+        headerText={"No se encontraron coincidencias"}
+        description={
+          "Es probable que la/s identidad/es de esta foto no esté/n registrada/s en nuestra base de datos de imágenes de referencia. También es posible que la imágen que usted ha subido se encuentre borrosa o no se aprecie con claridad la cara del individuo a identificar. Contacta a un administrador para más información"
+        }
+      />
     </div>
   );
 };

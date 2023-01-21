@@ -6,8 +6,7 @@ import { storage } from '../config/firebase'
 
 export default function test() {
   // const [imageReferenceUpload, setImageReferenceUpload] = useState<string[]>([])
-  // const [imageUrls, setImageUrls] = useState<string[]>([])
-  // const [nameList, setNameList] = useState<string[]>([])
+
   // const imagesListRef = ref(storage, 'reference/')
 
   // const uploadReferenceImage = async () => {
@@ -24,6 +23,11 @@ export default function test() {
   //     })
   //   }
   // }
+
+    // const [imageUrls, setImageUrls] = useState<string[]>([])
+  // const [nameList, setNameList] = useState<string[]>([])
+  // const imagesListRef = ref(storage, 'reference/')
+
 
   // useEffect(() => {
   //   listAll(imagesListRef).then((response) => {

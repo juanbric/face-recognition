@@ -33,7 +33,6 @@ const Sube: React.FC = () => {
   useClearCanvas(imageUrl, canvasRef, setLoadTags);
   // const [imageUrls, setImageUrls] = useState<string[]>([])
   // const [nameList, setNameList] = useState<string[]>([])
-
   // const imagesListRef = ref(storage, "reference/");
 
   // useEffect(() => {

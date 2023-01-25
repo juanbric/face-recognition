@@ -16,37 +16,38 @@ export const AppBar = () => {
   };
 
   return (
-    <div className=" bg-white border-b-[0.1px] border-[#dfd3dc] py-1 lg:py-4">
+    <div className="bg-gray-900  shadow-xl py-1 lg:py-4">
       <div className="lg:flex lg:justify-center lg:items-center">
         <div className="px-4 lg:px-8 w-auto lg:w-[1130px]">
-          <div className="flex text-sm text-slate-500 justify-between items-center">
+          <div className="flex text-sm text-slate-400 justify-between items-center">
             {/* Logged out and unauthorized view */}
-            <>
-              {!user || unauthorized ? (
-                <Link href={"/login"}>Login</Link>
-              ) : null}
-            </>
+            {!user || unauthorized ? null : (
+              <>
+                <Link
+                  className="hover:scale-110 transform-gpu ease-in-out duration-300 rounded-full"
+                  href={"/"}
+                >
+                  <img
+                    src="/trovali.svg"
+                    className="w-[32px] h-[32px] shadow-lg"
+                  />
+                </Link>
+              </>
+            )}
             {/* Users and admin view */}
             {user && !unauthorized && (
-              <>
-                <div>
-                  <Link href={"/"} className="pr-8">
-                    Reconoce y sube
-                  </Link>
-                  <Link href={"/busca"}>Busca</Link>
-                  {admin ? (
+              <div className="flex items-center gap-6">
+                {/* {admin ? (
                     <Link className="pl-8" href={"/alimenta"}>
-                      Alimenta
+                    Alimenta
                     </Link>
-                  ) : null}
-                </div>
-                <HStack>
-                  <button className="pr-8" onClick={signUserOut}>
-                    Log out
-                  </button>
-                  <p>{user?.displayName}</p>
-                </HStack>
-              </>
+                  ) : null} */}
+                <Link href={"/busca"}>
+                  <img src="/search.svg" />
+                </Link>
+                  <p className="">{user?.displayName}</p>
+                  <button onClick={signUserOut}>Log out</button>
+              </div>
             )}
           </div>
         </div>

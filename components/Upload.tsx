@@ -44,7 +44,7 @@ const Upload = ({
       {faceMatches && formData.fecha && formData.grado && (
         <>
           <button
-            className="text-sm py-2 mb-4 px-4 rounded-full border-0 font-semibold bg-blue-50 text-blue-700 mt-8 hover:bg-blue-100"
+            className="text-sm py-2 mb-6 px-4 rounded-lg font-semibold border-0 bg-gray-700 text-white mt-8 hover:bg-[#DD3F31]"
             onClick={uploadImage}
           >
             Upload image

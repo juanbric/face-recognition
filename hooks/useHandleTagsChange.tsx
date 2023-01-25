@@ -8,5 +8,5 @@ export default function useHandleTagsChange() {
     setFormData({ ...formData, [name]: value });
   };
 
-  return [formData, handleTagsChange]
+  return [formData, handleTagsChange, setFormData]
 }

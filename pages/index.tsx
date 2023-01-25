@@ -26,11 +26,11 @@ const Sube: React.FC = () => {
   const [noMatchesFound, setNoMatchesFound] = useState(false);
   const loaded = useLoadModels();
   const canvasRef = useRef(null);
-  const [formData, handleTagsChange] = useHandleTagsChange();
+  const [formData, handleTagsChange, setFormData] = useHandleTagsChange();
   const rol = useGetRol();
   useLogOut();
   rol?.rol === "guest" && router.replace("/login");
-  useClearCanvas(imageUrl, canvasRef, setLoadTags);
+  useClearCanvas(imageUrl, canvasRef, setLoadTags, setFormData);
   // const [imageUrls, setImageUrls] = useState<string[]>([])
   // const [nameList, setNameList] = useState<string[]>([])
   // const imagesListRef = ref(storage, "reference/");
@@ -50,22 +50,22 @@ const Sube: React.FC = () => {
   // }, []);
 
   // async function recognize() {
-    //   return Promise.all(
-    //     nameList.map(async (label, index) => {
-    //       const img = await faceapi.fetchImage(imageUrls[index]);
-    //       const detections = await faceapi
-    //         .detectSingleFace(img)
-    //         .withFaceLandmarks()
-    //         .withFaceDescriptor();
-  
-    //       if (!detections) {
-    //         throw new Error(`no faces detected for ${label}`);
-    //       }
-    //       const faceDescriptors = [detections.descriptor];
-    //       return new faceapi.LabeledFaceDescriptors(label, faceDescriptors);
-    //     })
-    //   );
-    // }
+  //   return Promise.all(
+  //     nameList.map(async (label, index) => {
+  //       const img = await faceapi.fetchImage(imageUrls[index]);
+  //       const detections = await faceapi
+  //         .detectSingleFace(img)
+  //         .withFaceLandmarks()
+  //         .withFaceDescriptor();
+
+  //       if (!detections) {
+  //         throw new Error(`no faces detected for ${label}`);
+  //       }
+  //       const faceDescriptors = [detections.descriptor];
+  //       return new faceapi.LabeledFaceDescriptors(label, faceDescriptors);
+  //     })
+  //   );
+  // }
 
   async function recognize() {
     const faces = [
@@ -128,7 +128,7 @@ const Sube: React.FC = () => {
       const formattedName = name.charAt(0).toUpperCase() + name.slice(1);
       const drawBox = new faceapi.draw.DrawBox(box, {
         label: formattedName,
-        boxColor: "#6c77e7",
+        boxColor: "#111827",
         lineWidth: 0.5,
       });
       //@ts-ignore
@@ -162,16 +162,23 @@ const Sube: React.FC = () => {
 
   return (
     <div className="py-10">
-      <MetaTag title={"Reconoce"} />
-      <div className="grid grid-cols-3 gap-8 justify-start">
-        <div className="col-span-2">
+      <MetaTag title={"Reconoce | Trovali"} />
+      <div className="grid grid-cols-5 gap-12 justify-start">
+        <h1 className="col-span-3 text-xl mb-8 font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+          1. Elige la foto a reconocer
+        </h1>
+        <h2 className="col-span-2 text-xl mb-8 font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+          2. Reconoce, añade tags y sube
+        </h2>
+      </div>
+      <div className="grid grid-cols-5 gap-12 justify-start">
+        <div className="col-span-3">
           <InputField loaded={loaded} handleImageChange={handleImageChange} />
           {imageUrl && (
             <PreviewImage canvasRef={canvasRef} imageUrl={imageUrl} />
           )}
         </div>
-        <div className="">
-          <p className="text-lg text-bold text-slate-500 mt-4">Resultados</p>
+        <div className="col-span-2">
           {imageUrl && (
             <RecognizeButton
               showRecognize={showRecognize}

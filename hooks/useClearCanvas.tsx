@@ -1,17 +1,23 @@
-import { useEffect } from 'react'
+import { useEffect } from "react";
 
-const useClearCanvas = (imageUrl: any, canvasRef: any, setLoadTags: any) => {
+const useClearCanvas = (
+  imageUrl: any,
+  canvasRef: any,
+  setLoadTags: any,
+  setFormData: any
+) => {
   useEffect(() => {
     if (imageUrl) {
       //@ts-ignore
-      const ctx = canvasRef.current.getContext('2d')
+      const ctx = canvasRef.current.getContext("2d");
       //@ts-ignore
-      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
-      setLoadTags(false)
+      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      setLoadTags(false);
       //@ts-ignore
-      canvasRef.current.innerHTML = ''
+      canvasRef.current.innerHTML = "";
+      setFormData({ grado: "", fecha: "" });
     }
-  }, [imageUrl])
-}
+  }, [imageUrl]);
+};
 
-export default useClearCanvas
+export default useClearCanvas;

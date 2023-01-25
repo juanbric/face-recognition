@@ -10,7 +10,7 @@ const PreviewImage = ({
       {/* Image */}
       <div className="relative">
         <canvas ref={canvasRef} />
-        <img src={imageUrl} width={800} height={600} />
+        <img src={imageUrl} width={800} height={600} className="rounded-lg"/>
       </div>
     </>
   );

@@ -5,9 +5,10 @@ const ShareResults = ({
   shareResults: any;
   faceMatches: any;
 }) => {
+    
   let names = faceMatches?.toString().split(",");
   let extractedNames = [];
-
+  //@ts-ignore
   for (let i = 0; i < names.length; i++) {
     let name = names[i].trim();
     extractedNames.push(name.split(" (")[0]);
@@ -26,7 +27,7 @@ const ShareResults = ({
   let uniqueNames = [...new Set(extractedNames)]; // Remove duplicate names
 
   let result = uniqueNames.join(", ");
-
+  //@ts-ignore
   if (uniqueNames.length > 1) {
     let lastCommaIndex = result.lastIndexOf(",");
     result =

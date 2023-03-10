@@ -5,34 +5,25 @@ const ShareResults = ({
   shareResults: any;
   faceMatches: any;
 }) => {
-    
-  let names = faceMatches?.toString().split(",");
+  let names = faceMatches ? faceMatches.toString().split(",") : [];
   let extractedNames = [];
-  //@ts-ignore
+
   for (let i = 0; names && i < names.length; i++) {
     let name = names[i].trim();
-    extractedNames.push(name.split(" (")[0]);
     if (name.includes("NEGATIVO")) {
-      extractedNames.push(name.split("NEGATIVO")[0]);
+      let extractedName = name.split("NEGATIVO")[0].trim(); // Extract name without NEGATIVO suffix
+      extractedNames.push(extractedName);
     }
   }
 
-  if (
-    extractedNames.length === 0 &&
-    faceMatches?.toString().includes("NEGATIVO")
-  ) {
-    extractedNames.push(faceMatches?.toString().split("NEGATIVO")[0]);
+  const namesArray = faceMatches?.toString().replace(/[\(\)\d\.]/g, "").split(",");
+  if (namesArray?.length > 1) {
+    namesArray[namesArray.length - 1] = "y " + namesArray[namesArray.length - 1];
   }
-  //@ts-ignore
-  let uniqueNames = [...new Set(extractedNames)]; // Remove duplicate names
-
-  let result = uniqueNames.join(", ");
-  //@ts-ignore
-  if (uniqueNames.length > 1) {
-    let lastCommaIndex = result.lastIndexOf(",");
-    result =
-      result.slice(0, lastCommaIndex) + " y" + result.slice(lastCommaIndex + 1);
-  }
+  
+  // Join the items with comma and "y" (if present)
+  const formattedString = namesArray?.join(namesArray.length > 2 ? ", " : " ");
+  
 
   return (
     <>
@@ -79,7 +70,7 @@ const ShareResults = ({
               ></path>
             </svg>
             <div className="ml-3 text-sm font-medium">
-              Tu escuela tiene permiso para compartir la foto de {result}!
+              Tu escuela tiene permiso para compartir la foto de {formattedString}
             </div>
           </div>
         ))}

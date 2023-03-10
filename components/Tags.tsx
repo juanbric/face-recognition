@@ -11,7 +11,7 @@ const Tags = ({
     <>
       {loadTags && (
         <>
-          <p className="text-slate-400 pt-[60px] pb-2">
+          <p className="text-slate-400 pt-8 pb-2">
             Añade las tags correspondientes para subir la foto a la base de
             datos
           </p>

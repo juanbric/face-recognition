@@ -15,6 +15,7 @@ import useHandleTagsChange from "../hooks/useHandleTagsChange";
 import { SimpleModal } from "../components/SimpleModal";
 import { getDownloadURL, listAll, ref } from "firebase/storage";
 import { storage } from "../config/firebase";
+import ShareResults from "../components/ShareResults";
 
 const Sube: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -23,6 +24,7 @@ const Sube: React.FC = () => {
   const [imageUpload, setImageUpload] = useState<File>();
   const [showRecognize, setShowRecognize] = useState(false);
   const [loadTags, setLoadTags] = useState(false);
+  const [shareResults, setShareResults] = useState(false);
   const [noMatchesFound, setNoMatchesFound] = useState(false);
   const loaded = useLoadModels();
   const canvasRef = useRef(null);
@@ -30,7 +32,7 @@ const Sube: React.FC = () => {
   const rol = useGetRol();
   useLogOut();
   rol?.rol === "guest" && router.replace("/login");
-  useClearCanvas(imageUrl, canvasRef, setLoadTags, setFormData);
+  useClearCanvas(imageUrl, canvasRef, setLoadTags, setFormData, setShareResults);
   // const [imageUrls, setImageUrls] = useState<string[]>([])
   // const [nameList, setNameList] = useState<string[]>([])
   // const imagesListRef = ref(storage, "reference/");
@@ -70,7 +72,7 @@ const Sube: React.FC = () => {
   async function recognize() {
     const faces = [
       "Neymar",
-      "Messi",
+      "MessiNEGATIVO",
       "Cristiano",
       "Mbappe",
       "Zidane",
@@ -127,7 +129,7 @@ const Sube: React.FC = () => {
       const name = result.toString().replace(/\(.*\)/g, "");
       const formattedName = name.charAt(0).toUpperCase() + name.slice(1);
       const drawBox = new faceapi.draw.DrawBox(box, {
-        label: formattedName,
+        label: formattedName.includes("NEGATIVO") ? formattedName.replace("NEGATIVO", "") : formattedName,
         boxColor: "#111827",
         lineWidth: 0.5,
       });
@@ -139,6 +141,7 @@ const Sube: React.FC = () => {
     matches.length === 0 && setNoMatchesFound(true);
     setIsLoading(false);
     setLoadTags(true);
+    setShareResults(true);
     setFaceMatches(matches);
   };
 
@@ -188,6 +191,7 @@ const Sube: React.FC = () => {
           )}
           {imageUrl && faceMatches?.length == 0 ? null : (
             <>
+            <ShareResults shareResults={shareResults} faceMatches={faceMatches}/>
               <Tags
                 formData={formData}
                 handleTagsChange={handleTagsChange}

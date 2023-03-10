@@ -9,7 +9,7 @@ const ShareResults = ({
   let names = faceMatches?.toString().split(",");
   let extractedNames = [];
   //@ts-ignore
-  for (let i = 0; i < names.length; i++) {
+  for (let i = 0; names && i < names.length; i++) {
     let name = names[i].trim();
     extractedNames.push(name.split(" (")[0]);
     if (name.includes("NEGATIVO")) {

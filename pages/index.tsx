@@ -167,10 +167,10 @@ const Sube: React.FC = () => {
     <div className="py-10">
       <MetaTag title={"Reconoce | Trovali"} />
       <div className="grid grid-cols-5 gap-12 justify-start">
-        <h1 className="col-span-3 text-xl mb-8 font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+        <h1 className="col-span-3 text-xl mb-8 font-bold leading-tight tracking-tight md:text-2xl">
           1. Elige la foto a reconocer
         </h1>
-        <h2 className="col-span-2 text-xl mb-8 font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+        <h2 className="col-span-2 text-xl mb-8 font-bold leading-tight tracking-tight md:text-2xl">
           2. Reconoce, añade tags y sube
         </h2>
       </div>

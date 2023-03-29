@@ -11,7 +11,8 @@ export const MetaTag = ({ title }: { title: any }) => {
       <meta name="distribution" content="Global" />
       <meta name="creator" content="Juan Pablo Briceno" />
       <meta name="publisher" content="Trovali" />
-      <link rel="icon" href="https://svgshare.com/i/pod.svg" />
+      <link rel="icon" href="https://svgshare.com/i/pdv.svg" />
+      {/* <link rel = "canonical" href ={url}/> */}
       <meta http-equiv="content-language" content="es" />
 
       <meta http-equiv="cache-control" content="no-cache" />

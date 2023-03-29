@@ -39,14 +39,14 @@ const Login = () => {
         <div className="flex flex-col items-center justify-center pt-[150px] pb-[280px]">
           <a
             href="#"
-            className="flex items-center mb-6 text-2xl font-semibold text-white"
+            className="flex items-center mb-6 text-2xl font-semibold "
           >
             <img src="/trovali.svg" className="w-8 h-8 mr-2 shadow-lg" />
             Trovali
           </a>
-          <div className="w-full bg-white rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0 bg-gray-800 border-gray-700">
+          <div className="w-full rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0  ">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 className="text-xl font-bold leading-tight tracking-tight md:text-2xl text-white">
+              <h1 className="text-xl font-bold leading-tight tracking-tight md:text-2xl">
                 Inicia sesión con Google para continuar
               </h1>
               <button

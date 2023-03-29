@@ -6,14 +6,18 @@ import { auth } from '../config/firebase';
 const useLogOut = () => {
   const router = useRouter();
 
-  const logOut = useCallback(onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      router.replace('/login');
-    }
-  }), []);
+  const logOut = useCallback(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.replace('/login');
+      }
+    });
+  }, [router]);
 
   useEffect(() => {
-    return logOut();
+    if (typeof window !== 'undefined') {
+      return logOut();
+    }
   }, [logOut]);
 };
 

@@ -16,27 +16,32 @@ export const AppBar = () => {
   };
 
   return (
-    <div className="bg-white py-1 lg:py-4">
+    <div className="bg-[#fffffb] py-1 lg:py-3 sticky top-0 z-10 shadow-sm">
       <div className="lg:flex lg:justify-center lg:items-center">
-        <div className="px-4 lg:px-8 w-auto lg:w-[1130px]">
-          <div className="flex text-sm justify-between items-center">
+        <div className="px-4 lg:px-8 lg:w-[1130px]">
+          <div className="flex justify-between items-center">
             {/* Logged out and unauthorized view */}
             {!user || unauthorized ? null : (
               <>
-                <Link
-                  className="hover:scale-110 transform-gpu ease-in-out duration-300 rounded-full"
-                  href={"/"}
-                >
-                  <img
-                    src="/trovali.svg"
-                    className="w-[32px] h-[32px] shadow-lg"
-                  />
-                </Link>
+                <div>
+                  <Link
+                    className="flex hover:scale-110 transform-gpu ease-in-out duration-300 rounded-full"
+                    href={"/"}
+                  >
+                    <img
+                      src="/trovali.svg"
+                      className="w-[32px] h-[32px] shadow-xl"
+                    />
+                    <h3 className="self-center ml-1.5 font-bold text-lg">
+                      Trovali
+                    </h3>
+                  </Link>
+                </div>
               </>
             )}
             {/* Users and admin view */}
             {user && !unauthorized && (
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-6 font-semi-bold">
                 {/* {admin ? (
                     <Link className="pl-8" href={"/alimenta"}>
                     Alimenta
@@ -45,8 +50,8 @@ export const AppBar = () => {
                 <Link href={"/busca"}>
                   <img src="/search.svg" />
                 </Link>
-                  <p className="">{user?.displayName}</p>
-                  <button onClick={signUserOut}>Log out</button>
+                <p className="">{user?.displayName}</p>
+                <button onClick={signUserOut}>Cerrar sesión</button>
               </div>
             )}
           </div>

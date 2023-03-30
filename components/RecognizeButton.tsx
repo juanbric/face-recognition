@@ -12,7 +12,7 @@ const RecognizeButton = ({
       {showRecognize ? (
         <button
           onClick={handleRecognition}
-          className="text-sm py-2 mb-6 px-4 rounded-lg font-semibold border-0 bg-gray-700 text-white hover:bg-[#DD3F31]"
+          className="text-sm py-2 mb-6 px-4 rounded-lg font-semibold border-0 bg-gray-100 text-blackk hover:bg-[#3c31dd] hover:text-white"
         >
           ¡Reconoce!
         </button>

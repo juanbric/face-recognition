@@ -44,10 +44,10 @@ const Upload = ({
       {faceMatches && formData.fecha && formData.grado && (
         <>
           <button
-            className="text-sm py-2 mb-6 px-4 rounded-lg font-semibold border-0 bg-gray-700 text-white mt-8 hover:bg-[#DD3F31]"
+            className="text-sm py-2 mb-6 px-4 rounded-lg font-semibold border-0 bg-gray-100 text-black hover:bg-[#3c31dd] hover:text-white mt-8"
             onClick={uploadImage}
           >
-            Upload image
+            Añade a base de datos
           </button>
 
           <SimpleModal

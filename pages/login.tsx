@@ -39,18 +39,18 @@ const Login = () => {
         <div className="flex flex-col items-center justify-center pt-[150px] pb-[280px]">
           <a
             href="#"
-            className="flex items-center mb-6 text-2xl font-semibold text-white"
+            className="flex items-center mb-6 text-2xl font-bold "
           >
             <img src="/trovali.svg" className="w-8 h-8 mr-2 shadow-lg" />
             Trovali
           </a>
-          <div className="w-full bg-white rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0 bg-gray-800 border-gray-700">
+          <div className="w-full rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0  ">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 className="text-xl font-bold leading-tight tracking-tight md:text-2xl text-white">
+              <h1 className="text-xl font-bold leading-tight tracking-tight md:text-2xl">
                 Inicia sesión con Google para continuar
               </h1>
               <button
-                className="w-full text-white bg-gray-700 border-gray-600 bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center justify-center text-center bg-primary-600 hover:bg-primary-700 focus:ring-primary-800"
+                className="w-full text-gray-900 bg-gray-100 border-gray-600 bg-primary-600 hover:bg-primary-700 outline-none font-medium rounded-lg text-sm px-5 py-2.5 flex items-center justify-center text-center bg-primary-600 hover:bg-primary-700"
                 onClick={signInWithGoogle}
               >
                 <img
@@ -60,7 +60,7 @@ const Login = () => {
                 ></img>
                 <p>Inicia sesión con Google</p>
               </button>
-              <p className="text-sm font-light text-gray-400">
+              <p className="text-sm font-light text-gray-600">
                 No tienes una cuenta aún? Contacta a los administradores de la
                 aplicación para que te autoricen la entrada.{" "}
               </p>

@@ -32,7 +32,13 @@ const Sube: React.FC = () => {
   const rol = useGetRol();
   useLogOut();
   rol?.rol === "guest" && router.replace("/login");
-  useClearCanvas(imageUrl, canvasRef, setLoadTags, setFormData, setShareResults);
+  useClearCanvas(
+    imageUrl,
+    canvasRef,
+    setLoadTags,
+    setFormData,
+    setShareResults
+  );
   // const [imageUrls, setImageUrls] = useState<string[]>([])
   // const [nameList, setNameList] = useState<string[]>([])
   // const imagesListRef = ref(storage, "reference/");
@@ -129,8 +135,10 @@ const Sube: React.FC = () => {
       const name = result.toString().replace(/\(.*\)/g, "");
       const formattedName = name.charAt(0).toUpperCase() + name.slice(1);
       const drawBox = new faceapi.draw.DrawBox(box, {
-        label: formattedName.includes("NEGATIVO") ? formattedName.replace("NEGATIVO", "") : formattedName,
-        boxColor: "#111827",
+        label: formattedName.includes("NEGATIVO")
+          ? formattedName.replace("NEGATIVO", "")
+          : formattedName,
+        boxColor: "#150c96",
         lineWidth: 0.5,
       });
       //@ts-ignore
@@ -164,62 +172,73 @@ const Sube: React.FC = () => {
   };
 
   return (
-    <div className="py-10">
-      <MetaTag title={"Reconoce | Trovali"} />
-      <div className="grid grid-cols-5 gap-12 justify-start">
-        <h1 className="col-span-3 text-xl mb-8 font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-          1. Elige la foto a reconocer
-        </h1>
-        <h2 className="col-span-2 text-xl mb-8 font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-          2. Reconoce, añade tags y sube
-        </h2>
-      </div>
-      <div className="grid grid-cols-5 gap-12 justify-start">
-        <div className="col-span-3">
-          <InputField loaded={loaded} handleImageChange={handleImageChange} />
-          {imageUrl && (
-            <PreviewImage canvasRef={canvasRef} imageUrl={imageUrl} />
-          )}
-        </div>
-        <div className="col-span-2">
-          {imageUrl && (
-            <RecognizeButton
-              showRecognize={showRecognize}
-              handleRecognition={handleRecognition}
-              isLoading={isLoading}
-            />
-          )}
-          {imageUrl && faceMatches?.length == 0 ? null : (
-            <>
-            <ShareResults shareResults={shareResults} faceMatches={faceMatches}/>
-              <Tags
-                formData={formData}
-                handleTagsChange={handleTagsChange}
-                loadTags={loadTags}
+    <div className="lg:flex lg:justify-center lg:items-center">
+      <div className="px-6 lg:px-8 w-auto lg:w-[1130px]">
+        <section className="py-8 md:py-20">
+          <MetaTag title={"Reconoce | Trovali"} />
+          <div className="grid grid-cols-5 gap-12 justify-start">
+            <h1 className="col-span-3 text-xl mb-8 font-bold leading-tight tracking-tight md:text-2xl">
+              1. Elige la foto a reconocer
+            </h1>
+            <h2 className="col-span-2 text-xl mb-8 font-bold leading-tight tracking-tight md:text-2xl">
+              2. Reconoce, añade tags y sube
+            </h2>
+          </div>
+          <div className="grid grid-cols-5 gap-12 justify-start">
+            <div className="col-span-3">
+              <InputField
+                loaded={loaded}
+                handleImageChange={handleImageChange}
               />
-              <Upload
-                formData={formData}
-                faceMatches={
-                  faceMatches &&
-                  faceMatches.map((name) => name.split(" (")[0]).join(" ") + " "
-                }
-                imageUpload={imageUpload}
-              />
-            </>
-          )}
-        </div>
-      </div>
+              {imageUrl && (
+                <PreviewImage canvasRef={canvasRef} imageUrl={imageUrl} />
+              )}
+            </div>
+            <div className="col-span-2">
+              {imageUrl && (
+                <RecognizeButton
+                  showRecognize={showRecognize}
+                  handleRecognition={handleRecognition}
+                  isLoading={isLoading}
+                />
+              )}
+              {imageUrl && faceMatches?.length == 0 ? null : (
+                <>
+                  <ShareResults
+                    shareResults={shareResults}
+                    faceMatches={faceMatches}
+                  />
+                  <Tags
+                    formData={formData}
+                    handleTagsChange={handleTagsChange}
+                    loadTags={loadTags}
+                  />
+                  <Upload
+                    formData={formData}
+                    faceMatches={
+                      faceMatches &&
+                      faceMatches.map((name) => name.split(" (")[0]).join(" ") +
+                        " "
+                    }
+                    imageUpload={imageUpload}
+                  />
+                </>
+              )}
+            </div>
+          </div>
 
-      <SimpleModal
-        isOpen={noMatchesFound}
-        onClose={() => {
-          setNoMatchesFound(false);
-        }}
-        headerText={"No se encontraron coincidencias"}
-        description={
-          "Es probable que la/s identidad/es de esta foto no esté/n registrada/s en nuestra base de datos de imágenes de referencia. También es posible que la imágen que usted ha subido se encuentre borrosa o no se aprecie con claridad la cara del individuo a identificar. Contacta a un administrador para más información"
-        }
-      />
+          <SimpleModal
+            isOpen={noMatchesFound}
+            onClose={() => {
+              setNoMatchesFound(false);
+            }}
+            headerText={"No se encontraron coincidencias"}
+            description={
+              "Es probable que la/s identidad/es de esta foto no esté/n registrada/s en nuestra base de datos de imágenes de referencia. También es posible que la imágen que usted ha subido se encuentre borrosa o no se aprecie con claridad la cara del individuo a identificar. Contacta a un administrador para más información"
+            }
+          />
+        </section>
+      </div>
     </div>
   );
 };
